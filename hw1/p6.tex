@@ -1,0 +1,18 @@
+    \begin{question}{6 (20') (New Pattern Matching)}
+		In this question we use a different fingerprinting technique for pattern matching. The idea is to map bit string $s$ into a $2\times2$ matrix $M(s)$ as follows:
+		\begin{itemize}
+			\item For empty string $\epsilon$, $M(\epsilon)=\begin{bmatrix}1&0\\0&1\end{bmatrix}$.
+			\item $M(0)=\begin{bmatrix}1&0\\1&1\end{bmatrix},M(1)=\begin{bmatrix}1&1\\0&1\end{bmatrix}.$
+			\item For non-empty strings $x,y$, $M(xy)=M(x)M(y).$
+		\end{itemize}
+		
+		Here are the questions. 
+		\begin{itemize}
+			\item[a. (10')] Show that this fingerprint function has the following properties.
+			\begin{enumerate}
+				\item (2') $M(x)$ is well-defined for all $x\in\{0,1\}^*$.
+				\item (8') $M(x)=M(y)\implies x=y$.
+			\end{enumerate}
+			\item[b. (10')] By considering the matrices modulo a suitable prime $p$, show an efficient randomized algorithm for pattern matching. Analyze the error bound of your algorithm.
+		\end{itemize}
+	\end{question}

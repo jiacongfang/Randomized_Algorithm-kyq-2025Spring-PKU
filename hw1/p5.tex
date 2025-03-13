@@ -1,0 +1,38 @@
+
+\begin{question}{5 (20') (Checking Commutativity)}
+	Let $G$ be a finite group. In this question we want to check if $G$ is abelian, i.e., whether
+	$$
+	x\circ y=y\circ x
+	$$
+	holds for all $x,y\in G$. We assume $G$ is presented as a set of \textit{generators} $\{g_1,g_2,\cdots,g_k\}$ (i.e., every element of $G$ can be written as a product of various $g_i$) together with a black box which returns any desired product $g_i\circ g_j$ in unit time.
+	
+	There is a randomized algorithm making use of a \textit{random product} $h=g_1^{b_1}\circ g_2^{b_2}\circ\cdots\circ g_k^{b_k}$, where $b_i\in\{0,1\}$ are independent fair coin flips. It runs as follows
+	\begin{enumerate}
+		\item Let $h,h'$ be two independent \textit{random products}.
+		\item If $h\circ h'\neq h'\circ h$, then output ``not abelian''; otherwise output ``abelian''.
+	\end{enumerate}
+	
+	Plainly this algorithm runs in $O(k)$ time, and is always correct when $G$ is abelian. Here are the questions.
+	\begin{itemize}
+		\item[a. (10')] Suppose $H$ is any \textit{proper} subgroup of $G$. For a random product $h$, show that 
+		$$
+		\Pr[h\notin H]\geq\frac{1}{2}.
+		$$
+		\textit{[Hint: Construct $h'\notin H$ from any $h\in H$. ]}
+		
+		\item[b. (10')] Show that when $G$ is not abelian, the algorithm reports a correct answer with probability at least $1/4$. 
+		
+		\textit{[Hint: Consider the elements of $G$ that commute with all elements of $G$.]}
+	\end{itemize}
+\end{question}
+
+\begin{answer}
+	\begin{enumerate}[label=\alph*).]
+		\item $H < G$ implies that there exists $a \in G$ such that $a \notin H$. Therefore, for any random $h \in H$, $h \circ a \notin H$. And for any $h_1, h_2 \in H, h_1\neq h_2$, it's easy to verify that $h_1\circ a \neq h_2\circ a$. 
+		Then for any random product $h$, we have 
+		\begin{align*}
+			1 = \Pr[h\in H] + \Pr[h\notin H] \le 2\Pr[h\notin H] \implies \Pr[h\notin H] \ge \frac{1}{2}.
+		\end{align*}
+		\item 
+	\end{enumerate}
+\end{answer}

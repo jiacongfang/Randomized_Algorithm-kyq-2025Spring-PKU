@@ -1,0 +1,41 @@
+    \begin{question}{7 (10') (Things Get Real)}
+    
+    This question is a simplified version of a competitive programming problem, appeared in \textit{CCPC 2022 Final}, where \textit{CCPC} is short for \textit{China Collegiate Programming Contest}. \textbf{You only need to give a solution, without proving it. }
+
+    Little Cyan Fish has devised a new game:
+    \begin{itemize}
+        \item The game is played with a string $s=s_1 s_2 \cdots s_n$ composed of the digits 0,1 and 2 .
+        \item The game proceeds as follows:
+        \begin{enumerate}
+            \item The player selects an index $i(1 \leq i<n)$ such that $s_i=s_{i+1}$. Notably, if no such $i$ exists, the game ends immediately.
+            \item  The characters $s_i$ and $s_{i+1}$ are then removed, and the player returns to step 1 .
+        \end{enumerate}
+        \item If the player can completely erase the string (leaving an empty string), he wins the game. If not, he loses.
+    \end{itemize}
+
+Keen to challenge Little Cyan Fish, Big Flower Letter presents him with a string $s=s_1 s_2 \cdots s_n$ of length $n$. She then proposes $q$ queries of the following type:
+
+\begin{itemize}
+    \item $l, r$ : Assuming $t=s[l \cdots r]=s_l s_{l+1} \cdots s_{r-1} s_r$, Little Cyan Fish needs to determine if the player can win the game if they were to play it using the string $t$.
+\end{itemize}
+
+Can you help Little Cyan Fish respond to all the queries?
+
+Your algorithm should have  time complexity of $O((n+ q) \log n)$.
+
+\ta{You can assume that, if you can give the right answer to all queries with probability $\ge .9$, you will get \textit{Accepted} in this question. }
+
+
+Here is an example: 
+
+Let $n = 8, s = 01221220$. 
+
+
+The answer to query $1, 8$ is \textit{Yes}, since $01221220 \to 011220 \to 0220 \to 00 \to \emptyset$.
+
+The answer to query $2, 5$ is \textit{Yes}, since $1221 \to 11 \to \emptyset$.
+
+The answer to query $3, 7$ is \textit{No}, since $22122 \to 122 \to 1$ is not an empty string. 
+
+The answer to query $5, 8$ is \textit{No}, since $1220 \to 10$ is not an empty string. 
+\end{question}

@@ -1,0 +1,39 @@
+\begin{question}{4 (15') (More on Tutte Matrix)} 
+In this problem, we consider Tutte Matrix and matching in more general problems.
+\begin{itemize}
+	\item[a. (7')] Given a \textit{bipartite graph} $G = (U, V, E)$, define its Tutte Matrix $A(G)$ as 
+\begin{equation*}
+	A(G)_{ij}:=\begin{cases}
+	x_{ij} & \text{if }(u_i,v_j)\in E;\\
+	0 & \text{otherwise.}
+	\end{cases}
+\end{equation*}
+Show that the maximum size of a matching in $G$ is exactly equal to the rank of $A(G)$.
+	\item[b. (8')] Given a \textit{simple graph} $G=(V,E)$, define its Tutte matrix $B(G)$ as
+\begin{equation*}
+	B(G)_{ij}:=\begin{cases}
+	x_{ij} & \text{if }(v_i,v_j)\in E\text{ and }i<j;\\
+	-x_{ij} & \text{if }(v_i,v_j)\in E\text{ and }i>j;\\
+	0 & \text{otherwise.}
+	\end{cases}
+\end{equation*}
+Show that $G$ has a perfect matching $\Leftrightarrow\det B(G)\not\equiv 0$. 
+
+\textit{[Hint: You can find some hints on the lecture notes. ]}
+
+\ta{This actually gives a $O(n ^ 3)$ algorithm for solving general matching on a graph with $n$ nodes. You're encouraged to find it out. }
+\end{itemize}
+\end{question}  
+
+\begin{answer}
+	\begin{enumerate}[label=\alph*).]
+		\item Notice that each possible matching $(I, J, E_{I,J})$ in $G$ corresponds to a minor of $A(G)$, denoted as $A(G)_{I,J}$ where $I\subseteq U, J\subseteq V$ and $|I|=|J|$. 
+		Apply the similar argument in the notes to $A(G)_{I,J}$, we have 
+		\begin{align*}
+			\det A(G)_{I,J} \not \equiv 0 \quad \text{ iff } \quad \text{$(I, J, E_{I,J})$ contains a perfect matching.}
+		\end{align*}
+		Suppose the maximum size of a matching in $G$ is $k$, then there exists a set of $k$ rows and $k$ columns in $A(G)$ such that the corresponding minor is non-zero, and any minor of $G$ with size $k+1$ is zero. Therefore, the rank of $A(G)$ is exactly equal to the maximum size of a matching in $G$.
+		\item 
+		\[\]
+	\end{enumerate}
+\end{answer}

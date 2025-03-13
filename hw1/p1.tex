@@ -1,0 +1,41 @@
+
+    \begin{question}{1 (10') (Von Neumann Trick)}
+    Given a coin with probability $p$ of getting ``head'' where $p\in(0,1)$. In this problem, we are going to use this coin to generate fair results in $\{0,1\}$. When $p=1/2$, it's quite simple. However, it may not be so trivial for general $p$. John von Neumann gave the following procedure:
+    \begin{enumerate}
+        \item Toss the coin twice.
+        \item If two results are the same, start over, forgetting both results.
+        \item If two results are different, give $0$ when the first result is ``head'', and $1$ otherwise.
+    \end{enumerate}
+    
+    \begin{itemize}
+        \item[a. (3')] Prove that, the procedure can generate uniform random results in $\{0,1\}$.
+        \item[b. (7')] Calculate the expectation for the number of throws. Express the answer as a function of $p$.
+    \end{itemize}
+    \end{question}
+
+\begin{answer}
+    \begin{enumerate}[label = \alph*).]
+        \item In each throw round, there are 3 cases:
+        \begin{align*}
+            \Pr[\text{results are the same}] &= p^2 + (1-p)^2 \\
+            \Pr[\text{terminated, output 0}] &= \Pr[\text{terminated, output 1}] = p(1-p).  
+        \end{align*}
+        And for the whole procedure, we have 
+        \begin{align*}
+            \Pr[\text{output 0}] = \sum_{t=1}^{\infty} \left(p^2 + (1-p)^2\right)^{t-1} \cdot p(1-p) = p(1-p) \cdot \frac{1}{2p(1-p)} = \frac{1}{2}.
+        \end{align*}
+        Similarly, we have $\Pr[\text{output 1}] = 1/2$. Thus, the procedure can generate uniform random results in $\{0,1\}$.
+        \item Denote the number of throws as $X$. Then we have 
+        \begin{align*}
+            \Pr(X = k) &= \left[p^2 + (1-p)^2\right]^{k-1} \cdot 2p(1-p). \\
+            \E[X] &= 2\sum_{k=1}^{\infty} k \cdot 2p(1-p) \cdot \left[p^2 + (1-p)^2\right]^{k-1} \\
+                &= 4p(1-p) \sum_{k=1}^{\infty} k \cdot \left[p^2 + (1-p)^2\right]^{k-1}.
+        \end{align*}
+        Let $g(p) = \sum_{k=0}^{\infty} (2p^2 - 2p + 1)^k = \frac{1}{2p(1-p)}$, then 
+        \begin{gather*}
+                g'(p) = -\frac{(1-2p)}{2p^2(1-p)^2} = \sum_{k=1}^{\infty} k(4p-2)(2p^2-2p+1)^{k-1} \\
+                \implies \sum_{k=1}^{\infty} k(2p^2-2p+1)^{k-1} = \frac{1}{4p^2(1-p)^2} \implies \E[X] = \frac{4p(1-p)}{4p^2(1-p)^2} = \frac{1}{p(1-p)}.
+        \end{gather*}
+    \end{enumerate}
+    \ed
+\end{answer}

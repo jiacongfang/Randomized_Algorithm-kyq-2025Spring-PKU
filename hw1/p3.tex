@@ -1,0 +1,42 @@
+\begin{question}{3 (20') (Schwartz--Zippel is More General)} 
+    Our course begins with two examples of randomized algorithms: checking matrix multiplication and checking associativity. It turns out that both can be tackled using Schwartz--Zippel's algorithm. In this problem, you will give equal or better error bounds by constructing polynomials for the two problems.
+ 
+	\begin{itemize}
+		\item[a. (10')] Given a binary operator $\circ$ on a set $X$ of size $n$, we wish to decide if $\circ$ is associative. In our class, we defined operator $\circ$ on $2^{X}$ to check the associativity on $X=\{x_1,\cdots,x_n\}$. Similarly we can define operator $\circ$ on $p^X$ where $p\geq 5$ is a given prime. In other words, every element in $p^X$ are in the form of $\sum_{i=1}^{n}r_ix_i$ with $r_i\in\mathbb{F}_p$. 
+		
+		Base on this, please design a randomized algorithm similar to the one in class. However, this time, you may want to analyze its error bound by applying Schwartz--Zippel Lemma to a polynomial, rather than inclusive-exclusive argument. (You do not need to prove the equivalence to associativity. Schwartz--Zippel Lemma also works for finite fields, provided the size of field is larger than the degree of polynomial --- you do not need to prove this, either. )
+		
+		\textit{[Hint: Construct multivariate polynomials $F_1(\cdot),\cdots,F_n(\cdot)$ such that $\sum_{i=1}^{n}F_i(\cdot)x_i\equiv 0$ iff $\circ$ is associative over $p^X$. ]}
+		
+		\item [b. (10')] Design a randomized algorithm that finds a counterexample when $\circ$ is not associative over $X$. Analyze the time complexity of your algorithm.
+	\end{itemize}
+\end{question} 
+
+\begin{answer}
+	\begin{enumerate}[label=\alph*).]
+		\item The algorithm is as follows:
+		\begin{algo}
+			\caption{\textbf{Check Associativity}}
+			\begin{algorithmic}[1]
+				\Require A binary operator $\circ$ on a set $X$ of size $n$.
+				\Ensure Whether $\circ$ is associative over $p^X$
+				\State Randomly sample $\{r_i\}_{i=1}^n, \{s_j\}_{j=1}^n, \{t_k\}_{k=1}^n$ from $\mathbb{F}_p$ independently and uniformly.
+				\State $R \leftarrow \sum_{i=1}^{n}r_ix_i, S \leftarrow \sum_{j=1}^{n}s_jx_j, T \leftarrow \sum_{k=1}^{n}t_kx_k$.
+				\If{$(R\circ S)\circ T\neq R\circ(S\circ T)$}
+					\State \Return \text{False}
+				\Else 
+					\State \Return \text{True}
+				\EndIf
+			\end{algorithmic}
+		\end{algo}
+		Let $F(x) = (R\circ S)\circ T - R\circ(S\circ T)$, and denote $F_i(\cdot)$ as the coefficient of $x_i$ in $F(x)$. Then we have
+			$F(x) = \sum_{i=1}^{n}F_i(\cdot)x_i. $
+		And it's easy to verify that $F(x) \equiv 0$ iff $\circ$ is associative over $p^X$. Note that $\deg(F(x)) \le 3$. 
+		By Schwartz-Zippel Lemma, the error bound of this algorithm is 
+		\begin{align*}
+			\Pr[R\circ S\circ T = R\circ S\circ T|\text{$\circ$ is not associative}] \le \frac{3}{|\mathbb{F}_p|} = \frac{3}{p}.
+		\end{align*}
+		\item Repeat \textbf{Algorithm 1} until a counterexample is found. Each iteration costs $O(n^2)$ time, and the expected number of iterations is at most $p/3$. Therefore, the time complexity of this algorithm is $O(n^2p)$.
+	\end{enumerate}
+	\ed
+\end{answer}

@@ -1,0 +1,56 @@
+\begin{question}{2 (15') (Refined Error Bound for Schwartz--Zippel Algorithm)}
+In this question, you will reflect on the error bound of Schwartz--Zippel Algorithm. 
+    \begin{itemize}
+        \item[a. (3')] Show the error bound in Schwartz--Zippel Algorithm is tight by giving an example. For convenience, assume $n=3$ and $S=\{1,2,3,4,5\}$. Give two distinct polynomials $P(x_1,x_2,x_3)$ and $Q(x_1,x_2,x_3)$ where the degree of $P-Q$ is $3$, such that Schwartz--Zippel Algorithm fails with probability \textit{exactly} $3/5$.
+        
+        \item[b. (12')] Let $f_0(x_1,x_2,\cdots,x_n)$ be a multivariate polynomial over $\mathbb R$. For each $1\leq i\leq n$, we inductively define $d_i$ to be the maximum exponent of $x_i$ in $f_{i-1}$, and $f_i(x_{i+1},\cdots,x_n)$ to be the coefficient of $x_i^{d_i}$ in $f_{i-1}$. Assume $S_1,S_2,\cdots,S_n\subseteq\mathbb R$ be arbitrary finite subsets. For $r_i\in S_i$ chosen independently and uniformly at random, show that
+        $$
+        \Pr\left[f_0(r_1,r_2,\cdots,r_n)=0\middle|f_0\not\equiv0\right]
+        \leq\sum_{i=1}^n\frac{d_i}{|S_i|}.
+        $$
+    \end{itemize}
+\end{question}
+
+\begin{answer}
+    \begin{enumerate}[label = \alph*).]
+        \item Let $P(x_1,x_2,x_3) = (x_1-1)(x_1-2)(x_1-3) + x_1x_2x_3$ and $Q(x_1,x_2,x_3) = x_1x_2x_3$. 
+        then 
+        \[
+            R:= P-Q = (x_1-1)(x_1-2)(x_1-3), \text{ whose degree is $3$}. 
+        \]
+        Therefore, the probability of failure is
+        \begin{align*}
+            \Pr[R(r_1,r_2,r_3) = 0 | R \not\equiv 0] &= \frac{3\cdot 5^2}{5^3} = \frac{3}{5}.
+        \end{align*}
+        \item Prove the statement by induction on $n$. 
+        
+        \textbf{Base case.} When $n=1$, $f_0$ is a single variable polynomial with at most $d_1$ roots in $S_1$. Thus, 
+        \[
+            \Pr[f_0(r_1) = 0 | f_0 \not\equiv 0] = \frac{d_1}{|S_1|}.
+        \]
+        \textbf{Induction hypothesis.} Assume the statement holds for all multivariate polynomial with at most $k-1$ variables.
+        
+        \textbf{Inductive step.} Consider the polynomial $f_0(x_1,x_2,\cdots,x_k)$, then we can write
+        \begin{align*}
+            f_0(x_1,x_2,\cdots,x_k) = f_1(x_2,\cdots,x_k)x_1^{d_1} + N(x_1, x_2, \cdots, x_k).
+        \end{align*}
+        Assume $r_2, r_3, \cdots, r_k$ are fixed, denote $\Omega$ as the event that $f_1(r_2, r_3, \cdots, r_k) = 0$. Then
+        \begin{itemize}
+            \item  When $\Omega$ happenes, by the induction hypothesis, 
+            \[
+                \Pr[\Omega] \leq \sum_{i=2}^k \frac{d_i}{|S_i|}
+            \]
+            \item When $\Omega$ does not happen, fix $r_2, r_3, \cdots, r_k$, then $f_0(r_1, r_2, \cdots, r_k)$ is a single variable polynomial with at most $d_1$ roots in $S_1$. Thus,
+            \[
+                \Pr[f_0(r_1, r_2, \cdots, r_k) = 0 | \neg \Omega] \le \frac{d_1}{S_1}
+            \]
+        \end{itemize}
+        Combine the two cases, we have
+        \begin{align*}
+            \Pr[f_0(r_1, \cdots, r_k) = 0 | f_0 \not\equiv 0] &= \Pr[\Omega]\Pr[f_0(r_1, \cdots, r_k) = 0 | \Omega] + \Pr[\neg \Omega]\Pr[f_0(r_1,\cdots, r_k) | \neg \Omega] \\
+            &\le \sum_{i=2}^k \frac{d_i}{|S_i|} + \frac{d_1}{|S_1|} = \sum_{i=1}^k \frac{d_i}{|S_i|}.
+        \end{align*}
+        Therefore, the statement holds for all $n \in \N^+$.
+    \end{enumerate}
+    \ed
+\end{answer}
