@@ -33,6 +33,20 @@
 		\begin{align*}
 			1 = \Pr[h\in H] + \Pr[h\notin H] \le 2\Pr[h\notin H] \implies \Pr[h\notin H] \ge \frac{1}{2}.
 		\end{align*}
-		\item 
+		\item Consider the center of G, denoted as $Z(G) = \{z\in G: z\circ g = g\circ z, \forall g\in G\}$. Note that $Z(G)$ is a subgroup of $G$. 
+		Thus, for a random product $h$, we have
+		\begin{align*}
+			\Pr[h\notin Z(G)] \ge \frac{1}{2}.
+		\end{align*}
+		Given any $h_0\notin Z(G)$, consider group $U_{h_0} = \{z \in G: z\circ h_0 = h_0\circ z\}$. It's easy to verify that $U_{h_0}$ is a subgroup of $G$. 
+		Then for a random product $h$, we have
+		\begin{align*}
+			\Pr[h\notin U_{h_0}] \ge \frac{1}{2}.
+		\end{align*}
+		Therefore, the probability that the algorithm reports a correct answer is
+		\begin{align*}
+			\Pr[h\circ h'\neq h'\circ h] \ge \Pr[h\notin Z(G)]\cdot \Pr[h'\notin U_{h}] \ge \frac{1}{4}.
+		\end{align*}
 	\end{enumerate}
+	\ed
 \end{answer}

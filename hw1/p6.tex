@@ -1,18 +1,104 @@
-    \begin{question}{6 (20') (New Pattern Matching)}
-		In this question we use a different fingerprinting technique for pattern matching. The idea is to map bit string $s$ into a $2\times2$ matrix $M(s)$ as follows:
+\begin{question}{6 (20') (New Pattern Matching)}
+	In this question we use a different fingerprinting technique for pattern matching. The idea is to map bit string $s$ into a $2\times2$ matrix $M(s)$ as follows:
+	\begin{itemize}
+		\item For empty string $\varepsilon$, $M(\varepsilon)=\begin{bmatrix}1&0\\0&1\end{bmatrix}$.
+		\item $M(0)=\begin{bmatrix}1&0\\1&1\end{bmatrix},M(1)=\begin{bmatrix}1&1\\0&1\end{bmatrix}.$
+		\item For non-empty strings $x,y$, $M(xy)=M(x)M(y).$
+	\end{itemize}
+	
+	Here are the questions. 
+	\begin{itemize}
+		\item[a. (10')] Show that this fingerprint function has the following properties.
+		\begin{enumerate}
+			\item (2') $M(x)$ is well-defined for all $x\in\{0,1\}^*$.
+			\item (8') $M(x)=M(y)\implies x=y$.
+		\end{enumerate}
+		\item[b. (10')] By considering the matrices modulo a suitable prime $p$, show an efficient randomized algorithm for pattern matching. Analyze the error bound of your algorithm.
+	\end{itemize}
+\end{question}
+
+\begin{answer}
+	\begin{enumerate}[label=\alph*).]
+		\item \underline{For \textbf{property 1}}, let $x := x_1x_2\cdots x_n \in \{0,1\}^*$, then indection on $n$ shows that $M(x)$ is well-defined, i.e., 
+		\begin{align*}
+			M(x) = M(\varepsilon) \prod_{i=1}^{n} M(x_i).
+		\end{align*}
 		\begin{itemize}
-			\item For empty string $\epsilon$, $M(\epsilon)=\begin{bmatrix}1&0\\0&1\end{bmatrix}$.
-			\item $M(0)=\begin{bmatrix}1&0\\1&1\end{bmatrix},M(1)=\begin{bmatrix}1&1\\0&1\end{bmatrix}.$
-			\item For non-empty strings $x,y$, $M(xy)=M(x)M(y).$
+			\item \textbf{Base case:} When $n = 1$, it's easy to verify that 
+			\begin{align*}
+				M(\varepsilon)M(1)= \begin{bmatrix}1&0\\0&1\end{bmatrix}\cdot \begin{bmatrix}1&1\\0&1\end{bmatrix} = M(1). \quad \text{Similarly for $M(0)$.} 
+			\end{align*}
+			\item \textbf{Inductive Hypothesis:} Assume that the statement holds for all $n\le k$.
+			\item \textbf{Inductive Step:} When $n = k+1$, we have 
+			\[
+				M(x_1x_2\cdots x_{k+1}) = M(x_1x_2\cdots x_k)M(x_{k+1}) = M(\varepsilon) \prod_{i=1}^{k} M(x_i)\cdot M(x_{k+1}).
+			\]
+			And for any $rs \in \{0,1\}^{k+1}$, if$r = \varepsilon$ or $s = \varepsilon$, then $M(rs) = M(r)M(s)$ holds by definition. Otherwise, by induction hypothesis, we have $M(rs) = M(\varepsilon) \prod_{i=1}^{k_r} r_i \prod_{j=1}^{k_s} s_j = M(r)M(s)$.
 		\end{itemize}
+		This completes the proof of \textbf{property 1}.
 		
-		Here are the questions. 
+		\underline{For \textbf{property 2}}, we fisrt prove that for all $x\in \{0,1\}^*$, the elements of $M(x)$ are all non-negative. Note that $M(\varepsilon)$ and $M(0), M(1)$ are all non-negative. Then for all $x = x_1x_2\cdots x_n$, we can easily verify it by induction on $n$.
+
+		Then we prove that $M(x) = M(y) \implies x = y$ by induction on $|x|:=n$ and $|y|:=m$.
 		\begin{itemize}
-			\item[a. (10')] Show that this fingerprint function has the following properties.
-			\begin{enumerate}
-				\item (2') $M(x)$ is well-defined for all $x\in\{0,1\}^*$.
-				\item (8') $M(x)=M(y)\implies x=y$.
-			\end{enumerate}
-			\item[b. (10')] By considering the matrices modulo a suitable prime $p$, show an efficient randomized algorithm for pattern matching. Analyze the error bound of your algorithm.
+			\item \textbf{Base case:} When $n = 0$, for all $m \in \N^*$, denote $y = y_1y_2\cdots y_m$.  If $y_1 = 0$, then 
+			\[
+				M(\varepsilon) = M(0)M(y_2\cdots y_m) \implies M(y_2\cdots y_m) = M(y) = \begin{bmatrix} 1 & 0\\ -1 & 1 \end{bmatrix} 
+			\]
+			which is impossible. Similarly for $y_1 = 1$. Thus, $M(\varepsilon) = M(y) \implies x = y, \forall m\in\N^*$ holds. 
+			Note that the case $m = 0$ is similar, i.e., $M(x) = M(\varepsilon) \implies x = y, \forall n\in\N^*$.
+			\item \textbf{Inductive Hypothesis:} Assume that the statement holds for all $n\le k_1$ and $m\le k_2$.
+			\item \textbf{Inductive Step:} When $n = k_1+1$ and $m = k_2+1$. Let $x = x_1x_2\cdots x_{k_1+1}$ and $y = y_1y_2\cdots y_{k_2+1}$. If $x_{k_1+1} = y_{k_2+1}$, 
+			then 
+			\begin{gather*}
+				M(x_1x_2\cdots x_{k_1})M(x_{k_1+1}) = M(y_1y_2\cdots y_{k_2})M(y_{k_2+1}) \\
+				M(x_1x_2\cdots x_{k_1}) = M(y_1y_2\cdots y_{k_2}) \implies x_1x_2\cdots x_{k_1} = y_1y_2\cdots y_{k_2} \implies x = y.
+			\end{gather*}
+			Otherwise, without loss of generality, suppose $x_{k_1+1} = 0$ and $y_{k_2+1} = 1$. Let 
+			\begin{align*}
+				M(x_1x_2\cdots x_{k_1}) = \begin{bmatrix} a & b\\ c & d \end{bmatrix}, \quad M(y_1y_2\cdots y_{k_2}) = \begin{bmatrix} a' & b'\\ c' & d' \end{bmatrix}.
+			\end{align*}
+			where $a,b,c,d,a',b',c',d'$ are all non-negative. Then we have
+			\begin{align*}
+				M(x) = \begin{bmatrix}
+					a+b & b \\
+					c+d & d
+				\end{bmatrix} = \begin{bmatrix}
+					a' & a'+b' \\
+					c' & c'+d'
+				\end{bmatrix} = M(y) \implies a = b' = c = d' = 0.
+			\end{align*}
+			Then $\det(M(x_1x_2\cdots x_{k_1})) = 0$, which is impossible.  
 		\end{itemize}
-	\end{question}
+		This completes the proof of \textbf{property 2}.
+		\item Like the fingerprinting technique in the lecture notes, the algorithm is as follows:
+		
+		\textbf{All operations are modulo $p$, ignore in the following algorithm for simplicity.}
+		\begin{algo}
+			\caption{\textbf{Pattern Matching}}
+			\begin{algorithmic}[1]
+				\Require A text $Q$ of length $n$ and a pattern $P$ of length $m$.
+				\Ensure Whether $P$ appears in $Q$.
+				\State Pick a random prime $p\in [2, \cdots, T]$.
+				\State Compute $M(P)$ and $M(Q[0:m])$. 
+				\For{$i = 1$ to $n-m$}
+					\State $M(Q[i:i+m]) \leftarrow M^{-1}(Q[i-1])\cdot M(Q[i-1:i+m-1])\cdot M(Q[i+m-1])$.
+					\If{$M(Q[i+1:i+m]) = M(P)$}
+						\State \Return \textbf{True}.
+					\Else
+						\State Continue.
+					\EndIf
+				\EndFor
+				\State \Return \textbf{False}.
+			\end{algorithmic}
+		\end{algo}
+		\textbf{Error Bound:} the length of each element in the matrix is at most $m$. 
+		In order for a false match to occur, $p$ must divide $(M(Q[i:i+m]) - M(P))$ for some $i$. 
+		Thus, $p$ must divide $\prod_{i} M(Q[i:i+m]) - M(P)$ where the product here is a element-wise product. 
+		Therefore, the error bound is
+		\[
+			\Pr[\text{Error}] \le \frac{\pi(mn)}{\pi(T)}.
+		\]
+	\end{enumerate}
+	\ed
+\end{answer}
