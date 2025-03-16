@@ -33,7 +33,67 @@ Show that $G$ has a perfect matching $\Leftrightarrow\det B(G)\not\equiv 0$.
 			\det A(G)_{I,J} \not \equiv 0 \quad \text{ iff } \quad \text{$(I, J, E_{I,J})$ contains a perfect matching.}
 		\end{align*}
 		Suppose the maximum size of a matching in $G$ is $k$, then there exists a set of $k$ rows and $k$ columns in $A(G)$ such that the corresponding minor is non-zero, and any minor of $G$ with size $k+1$ is zero. Therefore, the rank of $A(G)$ is exactly equal to the maximum size of a matching in $G$.
-		\item 
-		\[\]
+		\item Let $m = |V|$. Consider the matrix $B(G)$, we have
+		\begin{align}
+			\label{eq:det}
+			B(G) = \sum_{\sigma} \text{sgn}(\sigma) \prod_{i=1}^{n} B(G)_{i, \sigma(i)}. 
+		\end{align}
+		Notice that each non-zero term in the summation \eqref{eq:det} corresponds to a \textit{directed cycle cover} in $G$, respectively.
+		For example, suppose $G$ has one directed cycle cover with $k$ cycles, denote as $\{(v_{j_1}^i \to v_{j_2}^i \to \cdots \to v_{j_{r_i}}^i \to v_{j_1}^i): i\in \{1,\cdots,k\}\}$ where the subscript $j_t$ denotes the index of the vertex in $V$.
+		Then the corresponding permutation is:    
+		\[
+			\text{for } i \in \{1, \cdots, k\}:\quad \sigma(j_t) = j_{t+1}, \forall t\in \{1,\cdots,r_i-1\}, \sigma(j_{r_i}) = j_1. 
+		\]
+		\underline{We first prove that $G$ has a perfect matching $\implies \det B(G) \not\equiv 0$}. 
+		Assume the perfect matching of $G$ is $\{(v_{2k-1}, v_{2k})\}_{k=1}^{m/2}$. 
+		Then the directed cycle cover is $\{(v_{2k-1} \to v_{2k} \to v_{2k-1})\}_{k=1}^{m/2}$, 
+		and the corresponding term is 
+		\begin{align}
+			\label{eq:cycle}
+			\text{sgn}(\sigma)\cdot \prod_{i=1}^{m/2} \left(-x_{2k-1, 2k}^2\right) \not\equiv 0.
+		\end{align}		
+		Furthermore, this term cannot be canceled by any other term 
+		beacuse any other non-zero term which corresponds to a cycle cover 
+		must contain at least one variable that is not in \eqref{eq:cycle}.
+		
+		Therefore, $\det B(G) \not\equiv 0$.
+
+		\underline{Now we prove that $\det B(G) \not\equiv 0 \implies G$ has a perfect matching}.
+		Consider any permutation $\sigma_1$ containing a directed cycle with \textit{odd} length. 
+		Let $\sigma_2$ be the permutation obtained by reversing the direction of this cycle in $\sigma_1$ (keeping other cycles unchanged).
+		Then we try to prove that \textbf{Claim: the corresponding terms will cancel each other in $\det B(G)$}.
+
+		Let the odd length cycle of $\sigma_1$ be $(v_{j_1}\to \cdots \to v_{j_{g}} \to v_{j_1})$ where $g$ is odd. Notice that $\text{sgn}(\sigma_1) = \text{sgn}(\sigma_2)$, and beacuse $B(G)_{i,j} = -B(G)_{j,i}$, we have
+		\begin{align*}
+			\prod_{i=1}^{g} B(G)_{j_i, j_{i+1}} = x_{j_g, j_1}\prod_{i=1}^{g-1} x_{j_i, j_{i+1}} = -x_{j_1, j_g}\prod_{i=1}^{g-1} x_{j_{g-i+1}, j_{g-i}}.
+			= -\prod_{i=1}^{g} B(G)_{j_{g-i+1}, j_{g-i}}.
+		\end{align*}
+		Therefore, the \textbf{Claim} holds and any permutation contains odd length cycle will be canceled by its reverse permutation in $\det B(G)$.
+		
+		Then we can conclude that the non-zero contributions in $\det B(G)$ are all from the permutations containing only \textit{even} length cycle covers.
+		Furthermore, we can easily construct a perfect matching from such even-length cycle cover by removing half of the edges in each cycle like the following figure:
+
+		\begin{figure}[htbp]
+			\centering
+			\begin{tikzpicture}
+				\GraphInit[vstyle=Normal]
+				\SetGraphUnit{2}
+				\Vertices{circle}{1,2,3,4,5,6}
+				\SetUpEdge[style={->,bend right, thick},
+				color=red]
+				\Edge(1)(2)
+				\Edge(3)(4)
+				\Edge(5)(6)
+				\SetUpEdge[style={->,bend right, thick},
+				color=blue]
+				\Edge(2)(3)
+				\Edge(4)(5)
+				\Edge(6)(1)
+			\end{tikzpicture}
+			\caption{Construct a perfect matching by removing red edges.}
+		\end{figure}
+
+		Therefore, $G$ has a perfect matching $\iff \det B(G) \not\equiv 0$.
 	\end{enumerate}
+	\ed
 \end{answer}

@@ -1,4 +1,4 @@
-    \begin{question}{7 (10') (Things Get Real)}
+\begin{question}{7 (10') (Things Get Real)}
     
     This question is a simplified version of a competitive programming problem, appeared in \textit{CCPC 2022 Final}, where \textit{CCPC} is short for \textit{China Collegiate Programming Contest}. \textbf{You only need to give a solution, without proving it. }
 
@@ -39,3 +39,36 @@ The answer to query $3, 7$ is \textit{No}, since $22122 \to 122 \to 1$ is not an
 
 The answer to query $5, 8$ is \textit{No}, since $1220 \to 10$ is not an empty string. 
 \end{question}
+
+\begin{answer}
+    Notice that the matrix multiplication is associative but not commutative, then we can 
+    convert the problem to a matrix multiplication problem.
+
+    Get three matrices $A, B, C \in M^{2\times 2}(\R)$ which satisfies (1) $A\neq B \neq C$, (2) $A^2 = B^2 = C^2 = I$. 
+    Then replace $0, 1, 2$ with $A, B, C$ respectively, and the problem is equivalent to determine whether the matrix product is the identity matrix.
+    The detailed algorithm is as follows:
+    \vspace{1em}
+    \begin{algo}
+        \caption{\textbf{Little Cyan Fish Game}}
+        \begin{algorithmic}[1]
+            \Require matrix $A, B, C \in M^{2\times 2}(\R)$, queries $\{l, r\}_q$, string $s = s_1s_2\cdots s_n$.
+            \Ensure Whether the player can win the game 
+            \State $M(0) \leftarrow A, M(1) \leftarrow B, M(2) \leftarrow C$.
+            \State $P[0] \leftarrow I$. \Comment{Initialize the prefix product array with the identity matrix}
+            \For{$i = 1$ to $n$}
+                \State $P[i] \leftarrow P[i-1]\cdot M(s_i)$.
+            \EndFor
+            \For{$i = 1$ to $q$}
+                \State $l, r \leftarrow \{l, r\}_i$.
+                \If {$P[r] = P[l-1]$}   \Comment{If the matrix product between $l$ and $r$ is the identity matrix}
+                    \State \Return \textbf{Yes}.
+                \Else
+                    \State \Return \textbf{No}.
+                \EndIf
+            \EndFor
+        \end{algorithmic}
+    \end{algo}
+    \textbf{Time Complexity:} Each matrix multiplication costs $O(1)$ time, and the total time complexity is $O(n+q)$.
+
+    \ed
+\end{answer}
