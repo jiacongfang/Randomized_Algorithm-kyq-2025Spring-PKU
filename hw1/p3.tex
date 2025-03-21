@@ -17,6 +17,7 @@
 		\item The algorithm is as follows:
 		\begin{algo}
 			\caption{\textbf{Check Associativity}}
+			\label{algo:check}
 			\begin{algorithmic}[1]
 				\Require A binary operator $\circ$ on a set $X$ of size $n$.
 				\Ensure Whether $\circ$ is associative over $p^X$
@@ -36,7 +37,40 @@
 		\begin{align*}
 			\Pr[R\circ S\circ T = R\circ S\circ T|\text{$\circ$ is not associative}] \le \frac{3}{|\mathbb{F}_p|} = \frac{3}{p}.
 		\end{align*}
-		\item Repeat \textbf{Algorithm 1} until a counterexample is found. Each iteration costs $O(n^2)$ time, and the expected number of iterations is at most $p/3$. Therefore, the time complexity of this algorithm is $O(n^2p)$.
+		\item We first repeat \textbf{Algorithm 1} until finding $R, S, T$ such that $(R\circ S)\circ T\neq R\circ(S\circ T)$. 
+		And then find the counterexample $r_i, s_j, t_k \in X$ by the following algorithm:
+		\begin{algo}
+			\caption{\textbf{Find Counterexample}}
+			\label{algo:find}
+			\begin{algorithmic}[1]
+				\Require A binary operator $\circ$ on a set $X$ of size $n$.
+				\Ensure A counterexample $(r_i, s_j, t_k)$ such that $(r_i\circ s_j)\circ t_k\neq r_i\circ(s_j\circ t_k)$.
+				\State Repeat \textbf{Algorithm \ref{algo:check}} until finding $R, S, T$ such that $(R\circ S)\circ T\neq R\circ(S\circ T)$.
+				\State Denote $R = \sum_{i=1}^{n}r_ix_i, S = \sum_{j=1}^{n}s_jx_j, T = \sum_{k=1}^{n}t_kx_k$.
+				\While{$\max\{|R|, |S|, |T|\} > 1$} \Comment{$|R| := \#\{r_i|r_i \neq 0\}$, etc.}
+					\State Split $S = \sum_{i=1}^{\lfloor n/2\rfloor}s_ix_i + \sum_{i=\lfloor n/2\rfloor+1}^{n}s_ix_i := S_1 + S_2$. \Comment {assume $|S| = \max\{|R|, |S|, |T|\}$}
+					\If{$(R\circ S_1)\circ T = R\circ(S_1\circ T)$}
+						\State $S \leftarrow S_2$.
+					\Else
+						\State $S \leftarrow S_1$.
+					\EndIf
+				\EndWhile
+				\State $r_i \leftarrow R, s_j \leftarrow S, t_k \leftarrow T$. \Comment{Only one element exists in $R, S$ and $T$}
+				\State \Return $(r_i, s_j, t_k)$.
+			\end{algorithmic}
+		\end{algo}
+		\textbf{Time Complexity:} Denote $F(R, S, T) := (R\circ S)\circ T - R\circ(S\circ T)$. 
+		Similar with the argument presented in lecture note, if it exists $r^*, s^*, t^*$ such that $F(r^*, s^*, t^*)\neq 0$, then 
+		we have 
+		\begin{align*}
+			F(r^*, s^*, t^*) = &F(R_1, S_1, T_1) - F(R_1, S_1, T_0) - F(R_1, S_0, T_1)  - F(R_0, S_1, T_1) \\
+			& F(R_1, S_0, T_0) + F(R_0, S_1, T_0) + F(R_0, S_0, T_1) - F(R_0, S_0, T_0) 
+		\end{align*}
+		where $R_1 = R \cup \{r^*\}, R_0 = R$, etc. The first step of \textbf{Algorithm \ref{algo:find}} terminates in $O(1)$ iterations, with a time complexity of $O(n^2)$. 
+
+		The following steps halve the size of $R/S/T$ in each iteration, terminating in $O(\log n)$ iterations, resulting in a time complexity of $O(n^2\log n)$. 
+		
+		Thus, the overall time complexity of the algorithm is $O(n^2\log n)$.
 	\end{enumerate}
 	\ed
 \end{answer}

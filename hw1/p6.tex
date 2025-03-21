@@ -33,7 +33,7 @@
 			\[
 				M(x_1x_2\cdots x_{k+1}) = M(x_1x_2\cdots x_k)M(x_{k+1}) = M(\varepsilon) \prod_{i=1}^{k} M(x_i)\cdot M(x_{k+1}).
 			\]
-			And for any $rs \in \{0,1\}^{k+1}$, if$r = \varepsilon$ or $s = \varepsilon$, then $M(rs) = M(r)M(s)$ holds by definition. Otherwise, by induction hypothesis, we have $M(rs) = M(\varepsilon) \prod_{i=1}^{k_r} r_i \prod_{j=1}^{k_s} s_j = M(r)M(s)$.
+			And for any $rs \in \{0,1\}^{k+1}$, if$r = \varepsilon$ or $s = \varepsilon$, then $M(rs) = M(r)M(s)$ holds by definition. Otherwise, by induction hypothesis, we have $M(rs) = M(\varepsilon) \prod_{i=1}^{k_r} M(r_i) \prod_{j=1}^{k_s} M(s_j) = M(r)M(s)$.
 		\end{itemize}
 		This completes the proof of \textbf{property 1}.
 		
@@ -94,7 +94,7 @@
 		\end{algo}
 		\textbf{Error Bound:} the length of each element in the matrix is at most $m$. 
 		In order for a false match to occur, $p$ must divide $(M(Q[i:i+m]) - M(P))$ for some $i$. 
-		Thus, $p$ must divide $\prod_{i} M(Q[i:i+m]) - M(P)$ where the product here is a element-wise product. 
+		Thus, $p$ must divide $\prod_{i} M(Q[i:i+m]) - M(P)$. 
 		Therefore, the error bound is
 		\[
 			\Pr[\text{Error}] \le \frac{\pi(mn)}{\pi(T)}.

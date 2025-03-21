@@ -1,0 +1,13 @@
+    \begin{question}{2 (10') (Ramsey Number)}~\\
+    Define the non-diagonal Ramsey number $R(k,t)$ as the minimum number $n$ such that, in every $2$-coloring of $K_n$, there exists either a red $k$-clique, or a blue $t$-clique. 
+    
+    Prove that, if there is a real $p, 0\leq p\leq 1$ such that
+    $$
+    \binom{n}{k}p^{\binom{k}{2}}+\binom{n}{t}(1-p)^{\binom{t}{2}}<1,
+    $$
+    then $R(k,t)>n$. Using this, show that
+    $$
+    R(4,t)=\Omega\left(\frac{t^{3/2}}{(\ln t)^{3/2}}\right).
+    $$
+    \textit{[Hint: $\binom{n}{t} \le \frac{n^t}{t!},t! \sim \sqrt{2\pi t}(\frac{t}{e})^t, (1-p)^x \le e^{-px}.$ Note that the last inequality here will be frequently used in our lecture.]}
+    \end{question}

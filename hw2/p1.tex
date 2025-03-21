@@ -1,0 +1,5 @@
+    \begin{question}{1 (15') (Primality Test with Square Root Oracle)}    
+		Suppose you are given a black-box algorithm (known as ``oracle'') $\mathcal S(b,n)$ for computing square roots of $b$ modulo $n$. In other words, the algorithm may return \textit{one} $a$ such that $a^2\equiv b\pmod n$ in each invocation, or output $\bot$ if there is no root. Using this algorithm as a black box, design an $\mathsf{RP}$ algorithm (i.e., algorithm with one-side error) for compositeness, and analyze its error bound.
+		
+		\textit{[Hint: You do not know the behavior of algorithm $\mathcal S$. For example, the solution to $a^2\equiv 1\pmod{12}$ is $a\equiv 1,5,7,11\pmod{12}$, but $\mathcal S(1,12)$ may return $1$ all the time. You can never expect $\mathcal S$ to return a root randomly; its output can be adversarial. Therefore, in this question you must use some randomness in your algorithm.]}
+	\end{question}
