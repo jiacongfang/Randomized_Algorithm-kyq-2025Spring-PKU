@@ -1,70 +1,190 @@
     
     \begin{question}{7 (50') (A Combinatorial Proof of Chernoff Bound)} 
-    In the lecture, you learned how to prove Chernoff Bound by Generating Function.  In this problem, you will learn another way to prove Chernoff Bound. Our goal is to prove the following theorem: 
-
-    \begin{theorem}\label{main}
-    Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$, each w.p. $\frac 12$. Then $$\Pr[\sum_{i = 1} ^ n X_i \ge k \sqrt n] \le e ^ {- \Theta(k ^ 2)}$$
-    \end{theorem}
-
-    You will achieve this goal step by step. 
-
+        In the lecture, you learned how to prove Chernoff Bound by Generating Function.  In this problem, you will learn another way to prove Chernoff Bound. Our goal is to prove the following theorem: 
     
+        \begin{theorem}\label{main}
+        Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$, each w.p. $\frac 12$, and $k$ be a positive integer with $k\le \sqrt n$. Then $$\Pr[\sum_{i = 1} ^ n X_i \ge k \sqrt n] \le e ^ {- \Theta(k ^ 2)}$$
+        \end{theorem}
     
-    \begin{itemize}
-        \item[a. (10')] Prove the following lemma: 
+        You will achieve this goal step by step. 
+    
         
-        \begin{lemma} (Poor Man Chernoff Bound)
-            Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$ each w.p. $\frac 12$. Then 
+        
+        \begin{itemize}
+            \item[a. (10')] Prove the following lemma: 
             
-            $$\Pr[\sum_{i = 1} ^ n X_i \ge 2 k \sqrt {n}] \le 2 ^ {-k} $$
-        \end{lemma}
-
-        Hint:  First, you can use Chebeyshev’s Inequality to prove the following fact: 
-
-        \begin{fact}
-            Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$ each w.p. $\frac 12$. Then 
-
-            $$\Pr[\sum_{i = 1} ^ n X_i \ge 2 \sqrt {n}] \le \frac 14 $$
-        \end{fact}
-
-        Then, consider $S_i = \sum_{j = 1} ^ i X_j$, let $p$ be the first point where $S_p \ge 2 \sqrt n$, 
-        then $\Pr[S_n \ge 2 k \sqrt n] = \Pr[p 
- \text{ exists}] \cdot \Pr[S_n - S_p \ge 2 (k-1) \sqrt n \mid p \text{ exists}]$. If you can prove $\Pr[p \text{ exists} ] \le \frac 12$, you can prove the lemma by induction. 
-        
-
-        
-        \item[b. (10')] Prove the following lemma: 
-
-        \begin{lemma}(Chernoff Bound for Geometric Distribution) 
-        
-  Suppose $X_1, \dots, X_n$ are i.i.d random variables, that $X_i \ge 0, \Pr[X_i \ge j] \le p^ j, \forall j = 1, 2, \dots$ for a $p < \frac 14$. Then 
-  
-  $$\Pr[\sum_{i =1 } ^ n X_i \ge 2n] \le (4p) ^ {-n}$$.
-        \end{lemma}
-
-        Hint: If we can prove $\Pr[\sum_{i = 1} ^ n \lfloor X_i \rfloor \ge n] \le (4p) ^ {-n}$, then it's easy to see the lemma will hold. Suppose $\sum_{i = 1} ^ n  \lfloor X_i \rfloor  \ge n$, then there exist $Y_1, \dots, Y_n$, that $\forall 1\le i\le n, X_i \ge Y_i$ and $\sum_{i = 1} ^ n Y_i = n$. 
-
-        Fix the sequence $Y_1, \dots, Y_n$, calculate the probability of sequence $X_i$ satisfies $\forall i, X_i \ge Y_i$. Then use union bound for all the posible sequence of $Y$.
-
-
-        \item[c. (10')]  Prove the following lemma: 
-        \begin{lemma} (Lowerbound for Chernoff Bound)
+            \begin{lemma} (Poor Man Chernoff Bound)
+                \label{lemma: poor}
+                Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$ each w.p. $\frac 12$, and $k$ be a positive integer. Then 
+                
+                $$\Pr[\sum_{i = 1} ^ n X_i \ge 2 k \sqrt {n}] \le 2 ^ {-k} $$
+            \end{lemma}
     
-    Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$ each w.p. $\frac 12$. Then 
-    $$\Pr[\sum_{i = 1} ^ n X_i \ge \frac k2\sqrt{n}] \ge (\frac 14) ^ {k^ 2}$$.
+            Hint:  First, you can use Chebeyshev’s Inequality to prove the following fact: 
+    
+            \begin{fact}
+                \label{chebyshev fact}
+                Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$ each w.p. $\frac 12$. Then 
+    
+                $$\Pr[\sum_{i = 1} ^ n X_i \ge 2 \sqrt {n}] \le \frac 14 $$
+            \end{fact}
+    
+            Then, consider $S_i = \sum_{j = 1} ^ i X_j$, let $p$ be the first point where $S_p \ge 2 \sqrt n$, 
+            then $\Pr[S_n \ge 2 k \sqrt n] = \Pr[p 
+     \text{ exists}] \cdot \Pr[S_n - S_p \ge 2 (k-1) \sqrt n \mid p \text{ exists}]$. If you can prove $\Pr[p \text{ exists} ] \le \frac 12$, you can prove the lemma by induction. 
+            
+            \item[b. (10')] Prove the following lemma: 
+    
+            \begin{lemma}(Chernoff Bound for Geometric Distribution) 
+            \label{lemma: geometric}
+            
+      Suppose $X_1, \dots, X_n$ are i.i.d random variables, that $X_i \ge 0, \Pr[X_i \ge j] \le p^ j, \forall j = 1, 2, \dots$ for a $p < \frac 14$. Then 
+      
+      $$\Pr[\sum_{i =1 } ^ n X_i \ge 2n] \le (4p) ^ {n}$$.
+            \end{lemma}
+    
+            Hint: If we can prove $\Pr[\sum_{i = 1} ^ n \lfloor X_i \rfloor \ge n] \le (4p) ^ n$, then it's easy to see the lemma will hold. Suppose $\sum_{i = 1} ^ n  \lfloor X_i \rfloor  \ge n$, then there exist $Y_1, \dots, Y_n$, that $\forall 1\le i\le n, X_i \ge Y_i$ and $\sum_{i = 1} ^ n Y_i = n$. 
+    
+            Fix the sequence $Y_1, \dots, Y_n$, calculate the probability of sequence $X_i$ satisfies $\forall i, X_i \ge Y_i$. Then use union bound for all the posible sequence of $Y$.
+    
+    
+            \item[c. (10')]  Prove the following lemma: 
+            \begin{lemma} (Lowerbound for Chernoff Bound)
+        
+        Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$ each w.p. $\frac 12$, and $k$ be a positive integer and $k\le \sqrt n$, Then 
+        $$\Pr[\sum_{i = 1} ^ n X_i \ge \frac k2\sqrt{n}] \ge \left(\frac 14\right) ^ {k^ 2}$$.
+    
+    \end{lemma}
+    
+    You can use the fact: 
+    
+    \begin{fact}\label{lowerbound fact}
+            Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$ each w.p. $\frac 12$. Then 
+        $$\Pr[\sum_{i = 1} ^ n X_i \ge \frac 12\sqrt{n}] \ge \frac 14$$.
+    
+    \end{fact}
+    
+    Hint: Divide $X_1, \dots, X_n$ into $m = k^ 2$ groups, use the Fact \ref{lowerbound fact} on each group. 
+        \end{itemize}
+    
+        \item [d. (20')] Prove Theorem \ref{main}. 
+        \end{question}  
 
-\end{lemma}
+\begin{answer}
+    \begin{enumerate}[label=\alph*).]
+        \item We prove \textbf{Fact \ref{chebyshev fact}} first. Notice that 
+        \[
+            \Var\left[\sum_{i=1}^{n} X_i\right] = n, \quad \E\left[\sum_{i=1}^{n}X_i\right] = 0
+        \] 
+        Then by Chebeyshev's Inequality, we have
+        \begin{align*}
+            \Pr\left[\sum_{i=1}^{n}X_i \ge 2\sqrt{n}\right] \le \Pr\left[\left|\sum_{i=1}^{n}X_i - 0\right|\ge 2\sqrt{n}\right] \le \frac{\Var\left[\sum_{i=1}^{n}X_i\right]}{4n} = \frac{1}{4}.
+        \end{align*}
+        Now we prove that $\Pr[\text{$p$ exists}] \le \frac{1}{2}$. Notice that, for any $i \in [n]$, by symmetry, we have
+        \[
+            \Pr\left[S_n - S_i > 0\right] = \Pr\left[S_n - S_i < 0\right] \implies \Pr\left[S_n - S_i \ge 0\right] \ge \frac{1}{2}. 
+        \]
+        Therefore, 
+        \begin{align*}
+            \Pr[p \text{ exists}] &= \Pr\left[\bigcup_{i=1}^{n} \left\{S_i \ge 2\sqrt{n}\right\}\right] \le \sum_{i=1}^{n} \Pr\left[S_i \ge 2\sqrt{n}\right] \\
+            &\le 2 \sum_{i=1}^{n} \Pr\left[S_i \ge 2\sqrt{n}\right] \cdot \Pr[S_n - S_i \ge 0] 
+        \end{align*}
+        And by union bound, we have
+        \begin{align*}
+            \frac{1}{4} \ge \Pr\left[S_n \ge 2\sqrt{n}\right] &= \Pr\left[\bigcup_{i=1}^{n}\left\{S_i \ge 2\sqrt{n}\right\} \land \left\{S_n - S_i \ge 0\right\} \right] \\
+            &\ge \sum_{i=1}^{n} \Pr\left[\left\{S_i \ge 2\sqrt{n}\right\} \land \left\{S_n - S_i \ge 0\right\}\right] \\
+            &= \sum_{i=1}^{n} \Pr\left[S_i \ge 2\sqrt{n}\right] \cdot \Pr[S_n - S_i \ge 0] 
+        \end{align*}
+        Combining the two inequalities, we have
+        \[
+            \frac{1}{4} \ge  \sum_{i=1}^{n} \Pr\left[S_i \ge 2\sqrt{n}\right] \cdot \Pr[S_n - S_i \ge 0] \ge \frac{1}{2} \Pr[\text{$p$ exists}] \implies \Pr[\text{$p$ exists}] \le \frac{1}{2}.
+        \]
+        Then we prove the leamma by induction, for any $m \in [1,n]$: 
+        \begin{itemize}
+            \item \textbf{Base case:} For $k=1$, we have
+            \begin{align*}
+                \Pr\left[S_m \ge 2\sqrt{n}\right] \le \frac{\Var[S_m]}{4n} \le \frac{1}{4}. 
+            \end{align*}
+            \item \textbf{Induction Hypothesis:} Assume for any $k \le t (t\in \mathbb{Z}^*)$, we have
+            \begin{align*}
+                \Pr\left[S_m \ge 2k\sqrt{n}\right] \le 2^{-k} \text{ for } k = 1,2,\dots,t.
+            \end{align*}
+            \item \textbf{Induction Step:} For $k = t+1$, we have
+            \begin{align*}
+                \Pr\left[S_m \ge 2(t+1)\sqrt{n}\right] = \Pr\left[p \text{ exists}\right] \cdot \Pr\left[S_n - S_p \ge 2t\sqrt{n} \mid p \text{ exists}\right] \le \frac{1}{2} \cdot 2^{-t} = 2^{-(t+1)}.
+            \end{align*}
+            Here, $S_n - S_p$ are still sum of $n-p$ i.i.d random variables from $\{-1, 1\}$, and by the induction hypothesis, we have $\Pr\left[S_n - S_p \ge 2t\sqrt{n}\right] \le 2^{-t}$.
+        \end{itemize}
+        Therefore, by induction, we have proved a stronger version of the lemma, i.e.,  for any $m \in [1,n]$ and $k \in \mathbb{Z}^*$, we have
+        \[
+            \Pr\left[S_m \ge 2k\sqrt{n}\right] \le 2^{-k} \implies \Pr\left[S_n \ge 2k\sqrt{n}\right] \le 2^{-k}.
+        \]
+        \item Notice that
+        \begin{align*}
+            A := \left\{\sum_{i=1}^{n}X_i \ge 2n\right\} \subseteq \left\{\sum_{i=1}^{n} \lfloor X_i \rfloor \ge n\right\} := B \implies \Pr[A] \le \Pr[B].
+        \end{align*}
+        Fixed the sequence $Y_1, \dots, Y_n$ with $\sum_{i=1}^{n} Y_i = n$, we have
+        \begin{align*}
+            \Pr\left[\forall i, X_i \ge Y_i\right] = \prod_{i=1}^{n} \Pr\left[X_i \ge Y_i\right] = p^{\sum_{i=1}^{n} Y_i} = p^n.
+        \end{align*}
+        Then by union bound, we have
+        \begin{align*}
+            \Pr\left[\sum_{i=1}^{m}\lfloor X_i \rfloor \ge n\right] &\le \sum_{Y_i \in \mathbb{Z}_{\ge 0}, \sum Y_i =n} \Pr\left[\forall i, X_i \ge Y_i\right] \\
+            &= \binom{2n-1}{n-1}\cdot p^n \le (4p)^n.
+        \end{align*}
+        Therefore, 
+        \[
+            \Pr\left[\sum_{i=1}^{n}X_i \ge 2n\right] \le (4p)^n.
+        \]
+        \item We first consider a special case when $k^2 | n$. Divide $X_1, \dots, X_n$ into $m = k^2$ groups, each group contains $n/m = n/k^2$ random variables.
+        And then apply \textbf{Fact \ref{lowerbound fact}} to each group, we have
+        \begin{align*}
+            \forall i \in \{1, \cdots, k^2\},\quad  \Pr\left[\sum_{j\in G_i} X_j \ge \frac{1}{2k}\sqrt{n}\right] \ge \frac{1}{4} 
+        \end{align*}
+        Notice that 
+        \begin{align*}
+            \bigcap_{i=1}^{k^2} \left\{\sum_{j\in G_i} X_j \ge \frac{1}{2k}\sqrt{n}\right\} \subseteq \left\{\sum_{i=1}^{n} X_i \ge \frac{k}{2}\sqrt{n}\right\}
+        \end{align*}
+        Therefore,
+        \begin{align}
+            \label{eq:lowerbound}
+            \Pr\left[\sum_{i=1}^{n} X_i \ge \frac{k}{2}\sqrt{n}\right] \ge \Pr\left[\bigcap_{i=1}^{k^2} \left\{\sum_{j\in G_i} X_j \ge \frac{1}{2k}\sqrt{n}\right\}\right] =  \left(\frac{1}{4}\right)^{k^2} 
+        \end{align}
+        For the general case, suppose $n = q k^2 + r$ where $0 < r < q$. Then we divide $X_1, \dots, X_n$ into $m = k^2$ groups, where $r$ groups contain $q+1$ random variables and $m-r$ groups contain $q$ random variables.
+        Similar to the above case, we hope that for $q = \frac{n-r}{k^2}$, we have
+        \begin{align*}
+            r\cdot \frac{1}{2}\sqrt{q+1} + (k^2-r)\cdot \frac{1}{2}\sqrt{q} \approx \frac{k}{2}\sqrt{n} \iff r\sqrt{q+1} + (k^2-r)\sqrt{q} \approx k\sqrt{n}.
+        \end{align*}
+        If so we have equation \eqref{eq:lowerbound} holds for $n = q k^2 + r$ (may introduce some error).
 
-You can use the fact: 
-
-\begin{fact}\label{lowerbound fact}
-        Suppose $X_1, \dots, X_n$ are i.i.d random variables from $\{-1, 1\}$ each w.p. $\frac 12$. Then 
-    $$\Pr[\sum_{i = 1} ^ n X_i \ge \frac 12\sqrt{n}] \ge \frac 14$$.
-
-\end{fact}
-
-Hint: Divide $X_1, \dots, X_n$ into $m = k^ 2$ groups, use the Fact \ref{lowerbound fact} on each group. 
-    \end{itemize}
-
-    \item [d. (20')] Prove Theorem \ref{main}. 
-    \end{question}  
+        \item Follow the same idea as in part (c), we first divide $X_1, \dots, X_n$ into $m = k^2$ groups with the number of elements in each group is $\{n_i\}_{i=1}^{k^2}$.
+        Then apply \textbf{Lemma \ref{lemma: poor}} to each group, we have
+        \begin{align*}
+            \forall i \in \{1, \cdots, k^2\},\quad  \Pr\left[\sum_{j\in G_i} X_j \ge 2k'\sqrt{n_i}\right] \le 2^{-k'}
+        \end{align*}
+        Now we try to construct a geometric random variable $Y_i$ for each group $G_i$. Let $k' = ck$ here, where $c$ is a constant. 
+        Then we have
+        \begin{align*}
+            \Pr\left[\sum_{j\in G_i} X_j \ge 2ck\sqrt{n_i}\right] \le \left(\frac{1}{2^c}\right)^k
+        \end{align*}
+        Select $c \ge 3$ then consider random variable $Y_i$ such that
+        \begin{align*}
+            Y_i = \frac{\sum_{j\in G_i} X_j} {2c\sqrt{n_i}} \implies Y_i \text{ satisfies the requirement of \textbf{Lemma \ref{lemma: geometric}}}.
+        \end{align*}
+        Therefore, we have
+        \begin{align*}
+            \Pr\left[\sum_{i=1}^{k^2} Y_i \ge 2k^2\right] \le \left(\frac{1}{2^{c-2}}\right)^{k^2}
+        \end{align*}
+        Note that ($c \ge 3$, and let $n_i$ as close as possible which means $n_i = \lfloor n/k^2 \rfloor $ or $\lceil n/k^2 \rceil$)
+        \begin{align}
+            \label{eq:appro}
+            \sum_{i=1}^{k^2} Y_i = \sum_{i=1}^{k^2} \frac{\sum_{j\in G_i} X_j} {2c\sqrt{n_i}} \approx  \frac{\sum_{i=1}^{n} X_i }{2c\sqrt{n}}  
+        \end{align}
+        Therefore, we have (select constnt $c \ge 3$)
+        \begin{align*}
+            \Pr\left[\sum_{i=1}^{n} X_i \ge 4ck \sqrt{n}\right] \le \left(\frac{1}{2^{c-2}}\right)^{k^2} \le e^{-\Theta(k^2)} 
+        \end{align*}
+        \ed
+    \end{enumerate}
+    \textbf{Note:} The approximation in formula \eqref{eq:appro} may introduce some error, but I did not find a better way to prove it :<(. And I did not know if Lemma 5 is necessary for part (d).
+\end{answer}

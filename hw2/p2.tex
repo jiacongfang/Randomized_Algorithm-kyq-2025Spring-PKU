@@ -1,13 +1,58 @@
-    \begin{question}{2 (10') (Ramsey Number)}~\\
-    Define the non-diagonal Ramsey number $R(k,t)$ as the minimum number $n$ such that, in every $2$-coloring of $K_n$, there exists either a red $k$-clique, or a blue $t$-clique. 
+\begin{question}{2 (10') (Ramsey Number)}~\\
+Define the non-diagonal Ramsey number $R(k,t)$ as the minimum number $n$ such that, in every $2$-coloring of $K_n$, there exists either a red $k$-clique, or a blue $t$-clique. 
+
+Prove that, if there is a real $p, 0\leq p\leq 1$ such that
+$$
+\binom{n}{k}p^{\binom{k}{2}}+\binom{n}{t}(1-p)^{\binom{t}{2}}<1,
+$$
+then $R(k,t)>n$. Using this, show that
+$$
+R(4,t)=\Omega\left(\frac{t^{3/2}}{(\ln t)^{3/2}}\right).
+$$
+\textit{[Hint: $\binom{n}{t} \le \frac{n^t}{t!},t! \sim \sqrt{2\pi t}(\frac{t}{e})^t, (1-p)^x \le e^{-px}.$ Note that the last inequality here will be frequently used in our lecture.]}
+\end{question}
+
+\begin{answer}
+    We will prove the first part of the question.
     
-    Prove that, if there is a real $p, 0\leq p\leq 1$ such that
-    $$
-    \binom{n}{k}p^{\binom{k}{2}}+\binom{n}{t}(1-p)^{\binom{t}{2}}<1,
-    $$
-    then $R(k,t)>n$. Using this, show that
-    $$
-    R(4,t)=\Omega\left(\frac{t^{3/2}}{(\ln t)^{3/2}}\right).
-    $$
-    \textit{[Hint: $\binom{n}{t} \le \frac{n^t}{t!},t! \sim \sqrt{2\pi t}(\frac{t}{e})^t, (1-p)^x \le e^{-px}.$ Note that the last inequality here will be frequently used in our lecture.]}
-    \end{question}
+    Randomly color each edge of $K_n$ red with probability $p$ and blue with probability $1-p$, independently. 
+    Let $C$ be any $k$-clique in $K_n$, then $\Pr[C \text{ is red $k$-clique}] = p^{\binom{k}{2}}$. 
+    Let $C'$ be any $t$-clique in $K_n$, then $\Pr[C' \text{ is blue $k$-clique}] = (1-p)^{\binom{t}{2}}$.
+    Denote 
+    \begin{gather*}
+        M := \{\text{every 2-coloring, $K_n$ has a red $k$-clique or blue $t$-clique} \} \\
+        M_1 := \{\text{every 2-coloring, $K_n$ has a red $k$-clique} \},~ M_2 := \{\text{every 2-coloring,, $K_n$ has a blue $t$-clique} \} 
+    \end{gather*}
+    then by union bound, we have
+    \begin{align*}
+        \Pr[M] &\le \Pr[M_1] + \Pr[M_2] \\
+        &\le \binom{n}{k} \cdot \Pr[\text{a given $k$-clique is red}] + \binom{n}{t} \cdot \Pr[\text{a given $t$-clique is blue}] \\
+        &\le \binom{n}{k} p^{\binom{k}{2}} + \binom{n}{t} (1-p)^{\binom{t}{2}} < 1
+    \end{align*}
+    Therefore, there exists a 2-coloring of $K_n$ such that there is no red $k$-clique and no blue $t$-clique which implies $R(k,t) > n$.
+
+    Then we show that $R(4,t) = \Omega\left(\frac{t^{3/2}}{(\ln t)^{3/2}}\right)$ by proving that
+    \[
+        p = \frac{\ln t}{t}\in (0,1), n = \left(\frac{t}{\ln t}\right)^{3/2} \implies \binom{n}{4}p^{6}+\binom{n}{t}(1-p)^{\binom{t}{2}}<1. 
+    \]
+    Using the hint(and another form of Stirling's formula), we have 
+    \begin{align*}
+        \binom{n}{4}p^{6}+\binom{n}{t}(1-p)^{\binom{t}{2}} & \le \frac{n^4}{4!} p^6 + \frac{n^t}{t!} e^{- \frac{pt(t-1)}{2}} = \frac{n^4 p^6}{24} + \frac{n^t}{e^{\theta_t/12t}\sqrt{2\pi t}\left(\frac{t}{e}\right)^t} \cdot e^{-\frac{pt(t-1)}{2}} \\
+        &\le \frac{1}{24} + \frac{n^t e^t}{\sqrt{2\pi t}\cdot t^t} \cdot t^{-\frac{1}{2} (t-1)} = \frac{1}{24} + \frac{n^t e^t}{\sqrt{2\pi} \cdot t^{3t/2}} \\
+        &= \frac{1}{24} + \frac{e^t}{\sqrt{2\pi}\cdot (\ln t)^{3t/2}} =: f(t)
+    \end{align*}
+    We will show that $f(t) < 1$ for sufficiently large $t$.
+    \begin{align*}
+        f'(t) = \frac{e^t}{\sqrt{2\pi} \, (\ln t)^{3t/2}} \left(1 - \frac{3}{2} \ln(\ln t) - \frac{3}{2 \ln t}\right) < 0 \text{ for } t \in \mathbb{Z}_{\ge 2} \\
+    \end{align*}
+    Thus, for $t \ge 6, f(t) \le f(6) < 1$. Therefore, for sufficiently large $t$, we have
+    \[
+        R(4,t) > n = \left(\frac{t}{\ln t}\right)^{3/2} = \Omega\left(\frac{t^{3/2}}{(\ln t)^{3/2}}\right).
+    \]
+
+    \textbf{Another Form of Stirling's Formula:} For $n \in \mathbb{Z}^*$, we have
+    \[
+        n! = e^{\frac{\theta_n}{12n}} \sqrt{2\pi n} \left(\frac{n}{e}\right)^n, \text{ where } \theta_n \in (0,1)
+    \] 
+    \ed
+\end{answer}

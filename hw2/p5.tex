@@ -1,6 +1,39 @@
-    \begin{question}{5 (15') (Coupon Collector)}
-    Farmer John is deploying sprinklers in a square field with side length $1$. Each sprinkler has a cover radius of $r\ (r < 1)$, meaning that all crops within distance $r$ of the sprinkler can be watered. The sprinklers are dropped independently and uniformly in the square field at random. Farmer John wants to know how many sprinklers are needed to ensure that the whole area of the field is covered with probability at least $(1 - \epsilon)$. Let $m$ be the minimum number of sprinklers required. Prove that,
-    \[ m = \order{\frac{1}{r^2} \log{\frac{1}{\epsilon r^2}}}. \]
+\begin{question}{5 (15') (Coupon Collector)}
+Farmer John is deploying sprinklers in a square field with side length $1$. Each sprinkler has a cover radius of $r\ (r < 1)$, meaning that all crops within distance $r$ of the sprinkler can be watered. The sprinklers are dropped independently and uniformly in the square field at random. Farmer John wants to know how many sprinklers are needed to ensure that the whole area of the field is covered with probability at least $(1 - \varepsilon)$. Let $m$ be the minimum number of sprinklers required. Prove that,
+\[ m = \order{\frac{1}{r^2} \log{\frac{1}{\varepsilon r^2}}}. \]
 
-    \textit{[Hint: To show the required bound you only need a weak coupon collector bound; the result can be made stronger. In your solution, prove the coupon collector bound you use.]}
-    \end{question}
+\textit{[Hint: To show the required bound you only need a weak coupon collector bound; the result can be made stronger. In your solution, prove the coupon collector bound you use.]}
+\end{question}
+
+\begin{answer}
+    We firstly divide the farm into a square grid with side length $d$. In order to cover single small grid when the sprinkler is located in any position within the grid, let $d = r/\sqrt{2}$ (the worest case is when the sprinkler is located in the corner of the grid).  
+    Therefore, when there is a sprinkler in each grid, the whole farm is covered.
+
+    Denote $M = \{\text{there is a sprinkler in each grid}\}$, and $N_0 = \{\text{a grid is not covered by any sprinkler}\}$
+    \begin{align*}
+        \Pr[M] = 1 -  \sum_{\text{any grid}} \left(1 - \frac{r^2}{2}\right)^m = 1 - \frac{2}{r^2} \left(1 - \frac{r^2}{2}\right)^m 
+    \end{align*}
+    We hope that $\Pr[M] \ge 1 - \varepsilon$, i.e.,
+    \begin{align}
+        \label{eq:5.1}
+        \frac{2}{r^2} \left(1 - \frac{r^2}{2}\right)^m \le \varepsilon \implies m \ge \frac{\log(\varepsilon r^2/2)}{\log\left(1 - r^2/2\right)} = \log (\frac{2}{\varepsilon r^2}) \cdot \frac{1}{\log (2/(2-r^2))}
+    \end{align}
+    Let $k = r^2 \in (0,1)$, now we try to prove that 
+    \[
+        \log\left(\frac{2}{2-k}\right) \le k \iff \frac{2}{2-k} \le e^k \iff 0 \le (2-k)e^k - 2 := f(k)
+    \]
+    Notice that 
+    \begin{align*}
+        f'(k) = (1-k)e^k \ge 0 \implies f(k) > f(0) = 0. 
+    \end{align*}
+    Therefore, 
+    \begin{align}
+        \label{eq:5.2}
+        \log\left(\frac{2}{2-k}\right) \le k \iff \frac{1}{\log (2/(2-r^2))}  \ge \frac{1}{r^2}
+    \end{align}
+    Combining \eqref{eq:5.1} and \eqref{eq:5.2}, we have
+    \begin{align*}
+        m = \order{\frac{1}{r^2} \log\frac{1}{\varepsilon r^2}}.
+    \end{align*}
+    \ed
+\end{answer}

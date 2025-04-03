@@ -1,0 +1,120 @@
+\documentclass[11pt]{article}
+
+% ========== 页面布局与格式 ==========
+\usepackage[a4paper, left=2.0cm, right=2.0cm, top=2.5cm, bottom=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\setlength{\headheight}{14pt}
+\setlength{\parindent}{0in}
+
+% ========== 数学相关 ==========
+\usepackage{amsmath, amssymb, amsthm, bm}
+\usepackage{physics} % 物理符号（如需要）
+\usepackage{mathtools} % 扩展数学功能
+
+% ========== 图形与绘图 ==========
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows, automata, positioning}
+
+% ========== 表格处理 ==========
+\usepackage{booktabs} % 专业表格
+\usepackage{diagbox}  % 斜线表头
+\usepackage{array}    % 表格列格式
+
+% ========== 算法伪代码 ==========
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+% ========== 超链接与引用 ==========
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+% ========== 注释与辅助 ==========
+\usepackage{comment} % 多行注释
+
+\setlength{\headheight}{14pt}
+\setlength{\parindent}{0 in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\newenvironment{question}[2][Question]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\hfill$\blacktriangleleft$\end{trivlist}}
+\newenvironment{answer}[1][Answer]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1.}\hskip \labelsep]}{\hfill$\lhd$\end{trivlist}}
+
+\newcommand\E{\mathbb{E}}
+
+\newcommand{\ta}[1]{{\color{red!100!teal} [{\bf TA's Note:} #1]}}
+
+\usepackage{lastpage}
+\usepackage{datetime}
+
+
+% ========= 跨页代码环境 ==========
+\definecolor{lightgray}{gray}{0.75}
+
+\makeatletter
+\newenvironment{algo}
+  {% \begin{breakablealgorithm}
+    \begin{center}
+      \refstepcounter{algorithm}% New algorithm
+      \hrule height.8pt depth0pt \kern2pt% \@fs@pre for \@fs@ruled
+      \parskip 0pt
+      \renewcommand{\caption}[2][\relax]{% Make a new \caption
+        {\raggedright\textbf{\fname@algorithm~\thealgorithm} ##2\par}%
+        \ifx\relax##1\relax % #1 is \relax
+          \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##2}%
+        \else % #1 is not \relax
+          \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##1}%
+        \fi
+        \kern2pt\hrule\kern2pt
+     }
+  }
+  {% \end{breakablealgorithm}
+     \kern2pt\hrule\relax% \@fs@post for \@fs@ruled
+   \end{center}
+  }
+\makeatother
+
+\title{Homework Set \#1}
+\usetikzlibrary{positioning}
+
+\begin{document}
+
+    \pagestyle{fancy}
+    \lhead{Peking University}
+    \chead{}
+    \rhead{Randomized Algorithm, 2025 Spring}
+    \fancyfoot[R]{} 
+    \fancyfoot[C]{\thepage\ /\ \pageref{LastPage} \\ \textcolor{lightgray}{Last Compile: \today}}
+
+
+    \begin{center}
+        {\LARGE \bf Midterm}\\
+        {Due: 2025-4-10 23:59 \quad$|$\quad 4 Questions, 100+10 Pts}\\
+        {Name: Jiacong Fang, ID: 2200017849}
+    \end{center}
+
+
+    \input{p1}
+    \clearpage
+    \input{p2}
+    \clearpage
+    \input{p3}
+    \clearpage
+    \input{p4}
+    \clearpage 
+    
+\end{document}

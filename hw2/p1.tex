@@ -1,5 +1,61 @@
-    \begin{question}{1 (15') (Primality Test with Square Root Oracle)}    
-		Suppose you are given a black-box algorithm (known as ``oracle'') $\mathcal S(b,n)$ for computing square roots of $b$ modulo $n$. In other words, the algorithm may return \textit{one} $a$ such that $a^2\equiv b\pmod n$ in each invocation, or output $\bot$ if there is no root. Using this algorithm as a black box, design an $\mathsf{RP}$ algorithm (i.e., algorithm with one-side error) for compositeness, and analyze its error bound.
-		
-		\textit{[Hint: You do not know the behavior of algorithm $\mathcal S$. For example, the solution to $a^2\equiv 1\pmod{12}$ is $a\equiv 1,5,7,11\pmod{12}$, but $\mathcal S(1,12)$ may return $1$ all the time. You can never expect $\mathcal S$ to return a root randomly; its output can be adversarial. Therefore, in this question you must use some randomness in your algorithm.]}
-	\end{question}
+\begin{question}{1 (15') (Primality Test with Square Root Oracle)}    
+	Suppose you are given a black-box algorithm (known as ``oracle'') $\mathcal S(b,n)$ for computing square roots of $b$ modulo $n$. In other words, the algorithm may return \textit{one} $a$ such that $a^2\equiv b\pmod n$ in each invocation, or output $\bot$ if there is no root. Using this algorithm as a black box, design an $\mathsf{RP}$ algorithm (i.e., algorithm with one-side error) for compositeness, and analyze its error bound.
+	
+	\textit{[Hint: You do not know the behavior of algorithm $\mathcal S$. For example, the solution to $a^2\equiv 1\pmod{12}$ is $a\equiv 1,5,7,11\pmod{12}$, but $\mathcal S(1,12)$ may return $1$ all the time. You can never expect $\mathcal S$ to return a root randomly; its output can be adversarial. Therefore, in this question you must use some randomness in your algorithm.]}
+\end{question}
+
+\begin{answer}
+	Consider the following algorithm (suppose $n$ is odd here):
+	\begin{algo}
+		\centering
+		\caption{Primality Test with Square Root Oracle}
+		\label{alg:p_test}
+		\begin{algorithmic}[1]
+			\Require A number $n$ and the oracle $\mathcal S(b,n)$.
+			\Ensure Whether $n$ is prime or not.
+			\State Randomly sample $b \in \mathbb{Z}_n$. If $\gcd(b,n) \neq 1$, then \Return \textbf{No} immediately.
+			\State Loop to check if $n$ is a perfect power of prime $p \in [2, \log n]$.  \Comment{Time complexity: $O(\log^2 n)$}
+			\State $a \leftarrow \mathcal S(b^2,n)$.
+			\If{$a = \pm b$}
+				\State \Return \textbf{Yes}
+			\Else
+				\State \Return \textbf{No}
+			\EndIf
+		\end{algorithmic}
+	\end{algo}
+	If $n$ is prime, then $a^2 \equiv b^2 \pmod{n} \implies (a-b)(a+b) \equiv 0 \pmod{n} \implies n|(a-b) \lor n|(a+b)$. 
+	Therefore, $a \equiv \pm b \pmod{n}$, and the algorithm will return \textbf{Yes} with probability $1$. 
+	\textbf{Algorithm \ref{alg:p_test}} is a $\mathsf{RP}$ algorithm.
+
+	If $n$ is composite,  when $n = p^k$ for some $k$ and prime $p$, then the algorithm will return \textbf{No}. 
+	Now consider $ n = pq$ where $p,q$ are distinct odd prime. And analyse the solutions of Congruence Equation 
+	\begin{align}
+		\label{eq:cong}
+		x^2 &\equiv b^2 \pmod{pq} 
+	\end{align}
+	By the Chinese Remainder Theorem, we can decompose the equation into two equations:
+	\begin{align*}
+		x^2 &\equiv b^2 \pmod{p} \\
+		x^2 &\equiv b^2 \pmod{q}
+	\end{align*}
+	whose solutions are:
+	\begin{align*}
+		x &\equiv b \pmod{p}, \quad x \equiv -b \pmod{p} \\
+		x &\equiv b \pmod{q}, \quad x \equiv -b \pmod{q}
+	\end{align*}
+	Furthermore, we can get $4$ solutions of \eqref{eq:cong}:
+	\begin{align*}
+		x &\equiv \pm b \pmod{pq}, \quad x \equiv \pm (b(qq^{-1} - pp^{-1})) \pmod{pq} 
+	\end{align*}
+	where $q^{-1}$ and $p^{-1}$ are the inverses of $q$ and $p$ modulo $p$ and $q$, respectively.
+	We can verify that the four solutions are distinct. 
+
+	For more general cases, i.e., $n = \prod_i p_i^{k_i}$ where $p_i$ are distinct primes and $i \ge 2$. 
+	Using similar argument, the congruence equation $x^2 \equiv b^2 \pmod{n}$ has at least $4$ distinct solutions.
+	Therefore, 
+	\[
+		\Pr[\mathcal S(b,n) \not\equiv \pm b | n \text{ is composite}] \ge \frac{1}{2}. \implies \Pr[\text{Error}] \le \frac{1}{2}
+	\]
+	By repeating the algorithm(Line 3-7) $k$ times, we can reduce the error probability to $1/2^k$.
+	\ed 
+\end{answer}

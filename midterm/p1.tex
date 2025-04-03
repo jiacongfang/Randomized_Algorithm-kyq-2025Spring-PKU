@@ -1,0 +1,29 @@
+    
+\section*{Problem 1 (10')}
+For today's dinner, you are making a decision between two restaurants, \textit{Yannan} and \textit{Shaoyuan}. You know that one of them is a strictly better choice under all circumstances, and everyone prefers it to the other. However, you are the only person in the world who has no idea \textit{which} is the better one. You decide to ask some folks on \texttt{treehole.pku.edu.cn} to give scores for the two restaurants. According to the following responses, which one will you choose?
+\begin{itemize}
+    \item Alice gives a score of $84$ for \textit{Yannan}.
+    \item Bob gives a score of $3.92$ for \textit{Shaoyuan}.
+    \item Carol gives a score of $99999$ for \textit{Yannan}.
+    \item Dave gives a score of $666$ for \textit{Shaoyuan}.
+    \item Eve gives a score of $-\pi/6$ for \textit{Yannan}.
+    \item ...
+\end{itemize}
+At first glance, it seems impossible that one can do better than random guessing. However, we are going to show that this is not the case. 
+
+Formally, consider two score sequences $(x_1, \cdots, x_n), (y_1, \cdots, y_n) \in D^n$, where $D \subseteq \mathbb{R}$, such that either of the two cases is true:
+\begin{itemize}
+    \item Case 0: $x_i < y_i, \ \forall i\in [n]$. 
+    \item Case 1: $x_i > y_i, \ \forall i\in [n]$. 
+\end{itemize}
+We need to design a potentially randomized algorithm $\mathcal{A}$, whose output is either $0$ or $1$, to distinguish the two cases. Notably, we are restricted to ``half-blind'' algorithms: For each $i\in [n]$, algorithm $\mathcal{A}$ can only query one of the two values of $\{x_i,y_i\}$; once it decided to query one value, the other one in the $i$'th pair becomes inaccessible. 
+
+\begin{itemize}
+    \item [a.] (3') Suppose $n=1$ and $D = \mathbb{R}$. Design a half-blind algorithm $\mathcal{A}_1$ such that for any real numbers $x, y$,
+    \begin{align*}
+    \Pr\left[\ \mathcal{A}_1\text{ is correct } | \ x_1 = x, \  y_1 = y \ \right] > \frac{1}{2}.
+    \end{align*}
+    \item [b.] (7') Suppose $D = [0,100]$, $|x_i -y_i| \geq 1$. Design a half-blind algorithm $\mathcal{A}$ for sufficiently large $n$, and show that it has $1-1/2^{p(n)}$ success probability given any feasible input, where $p(n) = \Omega(n)$.
+\end{itemize}
+
+\textbf{Direction:} \textit{For each $i$, your half-blind algorithms can decide freely which one of $\{x_i, y_i\}$ to observe. However, it can only observe one of the two values. You should give proofs for the error bounds.}

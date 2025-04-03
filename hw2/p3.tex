@@ -1,14 +1,71 @@
     
-    \begin{question}{3 (10') (Conditional Expectation)}~\\ 
-    Let $v_1, \cdots, v_n \in \mathbb R^n$, all with $\|v_i\|_2= 1$.
-    \begin{enumerate}
-        \item [a. (5')] Prove that there exist $\epsilon_1, \dots, \epsilon_n =\pm 1$ such that
-              $$ 
-              \|\epsilon_1 v_1 + \cdots + \epsilon_n v_n\|_2 \leq \sqrt{n}.
-              $$
+\begin{question}{3 (10') (Conditional Expectation)}~\\ 
+Let $v_1, \cdots, v_n \in \mathbb R^n$, all with $\|v_i\|_2= 1$.
+\begin{enumerate}
+    \item [a. (5')] Prove that there exist $\varepsilon_1, \dots, \varepsilon_n =\pm 1$ such that
+            $$ 
+            \|\varepsilon_1 v_1 + \cdots + \varepsilon_n v_n\|_2 \leq \sqrt{n}.
+            $$
 
-        \item [b. (5')] Please provide a polynomial-time \textit{deterministic} algorithm for finding an assignment of $\epsilon_1,\dots, \epsilon_n$ in $\pm1$ such that $\|\epsilon_1 v_1 + \cdots + \epsilon_n v_n\|_2 \leq \sqrt{n}$, and analyze its time complexity. 
+    \item [b. (5')] Please provide a polynomial-time \textit{deterministic} algorithm for finding an assignment of $\varepsilon_1,\dots, \varepsilon_n$ in $\pm1$ such that $\|\varepsilon_1 v_1 + \cdots + \varepsilon_n v_n\|_2 \leq \sqrt{n}$, and analyze its time complexity. 
 
-        \textit{[Hint: To derandomize the algorithm, consider how you can leverage the result from \textnormal{a.} in an inductive manner to fix the values of $\epsilon_1, \cdots, \epsilon_n$ one by one.]}
+    \textit{[Hint: To derandomize the algorithm, consider how you can leverage the result from \textnormal{a.} in an inductive manner to fix the values of $\varepsilon_1, \cdots, \varepsilon_n$ one by one.]}
+\end{enumerate}
+\end{question}
+
+\begin{answer}
+    \begin{enumerate}[label=\alph*).]
+        \item Randomly assign $\varepsilon_i = \pm 1$ for $i=1,\dots,n$ with equal probability independently. 
+        Define random variable $X = \|\varepsilon_1 v_1 + \cdots + \varepsilon_n v_n\|_2^2$. 
+        Then we have 
+        \begin{align*}
+            \E[X] = \sum_{i=1}^{n} \E\left[\varepsilon_i^2 \cdot \norm{v_i}^2\right] + \sum_{i \neq j} \E[\varepsilon_i \varepsilon_j \cdot \langle v_i, v_j \rangle] = \sum_{i=1}^{n} \E\left[\varepsilon_i^2 \norm{v_i}^2\right] = n 
+        \end{align*}
+        Note that for any $i\neq j$, $\E[\varepsilon_i \varepsilon_j] = 0$. Therefore, there exist $\varepsilon_1, \cdots, \varepsilon_n$ such that
+        \[
+            \|\varepsilon_1 v_1 + \cdots + \varepsilon_n v_n\|_2 \leq \sqrt{\E[X]} = \sqrt{n}.
+        \]
+        \item Using Conditional Expectation, determinte $\varepsilon_1, \cdots, \varepsilon_n$ one by one. 
+        The detail algorithm is as follows:
+        \begin{algo}
+            \centering
+            \caption{Deterministic Algorithm for Finding $\varepsilon_1, \cdots, \varepsilon_n$}
+            \label{alg:deterministic}
+            \begin{algorithmic}[1]
+                \Require $v_1, \cdots, v_n \in \mathbb R^n$ with $\|v_i\|_2= 1$.
+                \Ensure $\varepsilon_1, \cdots, \varepsilon_n$ with deterministic values in $\pm 1$ 
+                \State $\displaystyle f(\varepsilon_1, \varepsilon_2, \cdots, \varepsilon_n) := \E_{\varepsilon_i \leftarrow_R \{-1, 1\}}\left[\|\varepsilon_1 v_1 + \cdots + \varepsilon_n v_n\|_2^2\right]$
+                \For{$i = 1$ to $n$}
+                    \State $f_1 \leftarrow f\left(\varepsilon_1, \varepsilon_2, \cdots, \varepsilon_n \big| \varepsilon_i=1 \land \sum_{k=1}^{i-1} \varepsilon_k \text{ fixed already}\right)$ 
+                    \State $f_2 \leftarrow f\left(\varepsilon_1, \varepsilon_2, \cdots, \varepsilon_n \big| \varepsilon_i=-1 \land \sum_{k=1}^{i-1} \varepsilon_k \text{ fixed already}\right)$
+                    \If {$f_1 \leq f_2$}
+                        \State $\varepsilon_i \leftarrow 1$
+                    \Else
+                        \State $\varepsilon_i \leftarrow -1$
+                    \EndIf
+                \EndFor
+                \State \Return $\varepsilon_1, \cdots, \varepsilon_n$
+            \end{algorithmic}
+        \end{algo}
+        \textbf{Time Complexity Analysis.} Each iteration of the for loop takes $O(n)$ time to compute $f_1$ and $f_2$.\footnote{Naive method costs $O(n^2)$, and it can achieve $O(n)$ by computing $f_1$ and $f_2$ using the stored previous values.}
+        Therefore, the total time complexity is $O(n^3)$.
+
+        \textbf{Correctness.} We can prove the correctness of the algorithm by induction on $n$. 
+        \begin{itemize}
+            \item For $n=1$, the algorithm is correct trivially.
+            \item Suppose the algorithm is correct for $n=k-1$.
+            \item For $n=k$, $f_1 := f(\varepsilon_1,\varepsilon_2,\cdots, \varepsilon_n | \varepsilon_1 = 1 ), f_2 := f(\varepsilon_1,\varepsilon_2,\cdots, \varepsilon_n | \varepsilon_1 = -1 )$.
+            then 
+            \begin{align*}
+                \text{for } j \in \{0,1\}, f_j = \E \left[\norm{(-1)^j \cdot v_1 + \sum_{i=2}^{n} \varepsilon_i v_i}_2^2\right] \le 1 + \E\left[ \norm{\sum_{i=2}^{n} \varepsilon_i^2}_2^2 \right] \le n
+            \end{align*}
+            The last inequality holds due to the induction hypothesis. Therefore, we have
+            \begin{align*}
+                f(\varepsilon_1,\varepsilon_2,\cdots, \varepsilon_n) &= \Pr[\varepsilon_1 = 1] \cdot f_1 +  \Pr[\varepsilon_1 = -1] \cdot f_2 \\
+                &\le \min\{f_1, f_2\} \le n.
+            \end{align*}
+        \end{itemize}
+        Inductively, we can prove that the algorithm is correct for all $n \in \mathbb N^+$.
     \end{enumerate}
-    \end{question}
+    \ed
+\end{answer}

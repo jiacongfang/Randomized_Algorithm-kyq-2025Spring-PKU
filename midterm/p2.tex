@@ -1,0 +1,19 @@
+\section*{Problem 2 (15') (Knapsack Counting)} Recall the 0-1 Knapsack problem you have encountered before. We are given $n$ objects of weight $0\leq a_1\leq\cdots\leq a_n\leq b$ where $b$ is the total volume of the knapsack, and we are asked to find a 0-1 assignment $x_1,\cdots,x_n$ such that $\sum_{i=1}^{n}a_ix_i\leq b$. In the counting version, we will compute the number of valid assignments, the set of which is denoted as $S$, 
+ instead of finding the optimal solution. The key idea here is similar to $\mathsf{\#DNF}$; that is, sampling from a restricted space. Suppose $b$ is much larger than $n^2$. 
+    
+    We will use the \textit{scaling method}. Define $a_i':=\lfloor n^2a_i/b\rfloor$, then $0\leq a_i'\leq n^2$. Note the floor operator may cause error when trying to recover $a_i$ from $a_i'$, but the total error is no more than $n(b/n^2)=b/n$. Let $S':=\left\{\bm x: \sum_{i=1}^{n}a_i'x_i\leq n^2\right\}$ be the set of solutions to the rescaled problem. 
+    \begin{itemize}
+        \item [a. (2')] Prove that $S\subseteq S'$. 
+    \end{itemize}
+    Apparently, the converse does not necessarily hold. However, we claim that any $\bm x\in S'$ can be shoehorned into $S$ by setting at most one of the $x_i$ from $1$ to $0$. 
+    \begin{itemize}
+        \item [b. (5')] Prove the claim above, which implies $|S'|\leq (n+1)|S|$. 
+    \end{itemize}
+    In other words, with probability at least $1/(n+1)$, a uniformly random element of $S'$ is in $S$. So the remaining task here is to compute $|S'|$ and sample from $S'$. Let $C(k,m):=\left|\left\{\bm x: \sum_{i=1}^{k}a_i'x_i\leq m\right\}\right|$. 
+    \begin{itemize}
+        \item [c. (3')] Design an algorithm based on dynamic programming that computes $C(i,j)$ for all $0\leq i\leq n$ and $0\leq j\leq n^2$. Your algorithm should take $O(n^3)$ time. 
+    \end{itemize}
+    Definitely, we can fetch the value of $|S'|$ from $C(n,n^2)$. But in fact, we can also use this table to sample uniformly from $S'$. 
+    \begin{itemize}
+        \item [d. (5')] Based on the values of $C(\cdot,\cdot)$, design an algorithm which outputs a uniform sample of $S'$. Your algorithm should run in $O(n)$ time (excluding the time cost by the random generator).
+    \end{itemize}

@@ -1,0 +1,41 @@
+\section*{Problem 4 (25') (Sub-Network Approximation for Two-Layer Neural Networks)} 
+
+
+\begin{definition}[Two-Layer Neural Network]
+    Consider a wide neural network $f_M(x; \theta):\mathbb{R}^{d}\rightarrow\mathbb{R}$ of the form
+
+\[
+f_M(x; \theta) := \sum_{j=1}^M a_j \sigma(w_j^{\top} x),
+\]
+
+where \( \theta = \{a_1, \dots, a_M, w_1, \dots, w_M\} \) denotes the parameters of the network, \( a_j \in \mathbb{R} \) are the coefficients, and \( w_j \in \mathbb{R}^d \) are the weights associated with the \( j \)-th neuron. Here, \( \sigma:\mathbb{R}\rightarrow\mathbb{R} \) is a non-linear activation function, such as ReLU or sigmoid.
+\end{definition}
+
+\begin{definition}[Parameter Norm]
+    The norm of the parameters \( \theta \) is defined as
+
+\[
+\|\theta\|_{\mathcal{P}} := \sum_{j=1}^M |a_j| \|w_j\|_2,
+\]
+
+where \( \|w_j\|_2 \) denotes the Euclidean norm of the weight vector \( w_j \), and \( \|\theta\|_{\mathcal{P}} \) is assumed to be finite.
+\end{definition}
+ 
+
+Let \( \pi = \mathrm{Unif}(\mathbb{S}^{d-1}) \) denote the uniform distribution over the unit sphere \( \mathbb{S}^{d-1} \subset \mathbb{R}^d \). The goal is to approximate the network \( f_M(x; \theta) \) with a sparse subset of the neurons, while controlling the error in expectation. Indeed, please prove the following result:
+
+\begin{theorem}
+    For any integer \( m \in \mathbb{N} \), there exists a sparse vector \( \tilde{a} = (\tilde{a}_1, \dots, \tilde{a}_M) \) such that \( \|\tilde{a}\|_0 = m \), i.e., the vector \( \tilde{a} \) contains exactly \( m \) non-zero entries, which satisfies the following approximation bound:
+
+\[
+\mathbb{E}_{x \sim \pi} \left( \sum_{j=1}^M \tilde{a}_j \sigma(w_j^{\top} x) - \sum_{j=1}^M a_j \sigma(w_j^{\top} x) \right)^2 \lesssim \frac{\|\theta\|_{\mathcal{P}}^2}{dm}.
+\]
+\end{theorem}
+
+
+%This inequality shows that by selecting a sparse subset of \( m \) coefficients \( \tilde{a} \) from the full set of coefficients \( a_1, \dots, a_M \), we can achieve a good approximation of the network function, with the error bounded by a term proportional to the squared norm of the network parameters \( \|\theta\|_{\mathcal{P}}^2 \) divided by \( dm \), where \( d \) is the dimensionality of the input space and \( m \) is the number of selected neurons.
+
+\begin{remark}
+    In essence, this result demonstrates that it is possible to approximate the network with a sparse representation without incurring significant loss in performance, provided the number of selected neurons \( m \) is sufficiently large relative to the network's parameter norm $\|\theta\|_{\mathcal{P}}$, and the size of the input space \( d \).
+\end{remark}
+

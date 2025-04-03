@@ -1,0 +1,126 @@
+\section*{Problem 3 (50') (Low Diameter Decomposition)} 
+In this problem, you'll learn Low Diameter Decomposition, and use it to give approximate algorithm for some fundamental graph problem like Tree Embedding, All Pair Shortest Path (APSP).
+
+
+\begin{definition}[Low Diameter Decomposition (LDD)]
+    Given an undirected graph $G = (V, E)$, a \textbf{Low Diameter Decomposition (LDD)} scheme with approximation factor $\beta$ and diameter bound $D$ is a randomized algorithm that partitions $V$ into disjoint clusters $V_1, V_2, \dots, V_k$ satisfying:
+    \begin{enumerate}
+        \item \textbf{Bounded Diameter}: For each $V_i$, the induced subgraph $G[V_i]$ has diameter $\leq D$.
+        \item \textbf{Separation Probability}: For any $x, y \in V$,
+        $$
+            \Pr\big[\text{$x$ and $y$ lie in different clusters}\big] \leq \beta \cdot \frac{d_G(x, y)}{D},
+        $$
+        where $d_G(x, y)$ denotes the shortest-path distance between $x$ and $y$ in $G$.
+    \end{enumerate}
+\end{definition}
+
+\noindent \textbf{Remarks}:
+\begin{itemize}
+    \item The \textbf{diameter} of $G[V_i]$ is $\max_{u,v \in V_i} d_{G}(u, v)$.
+    \item $\beta$ balances cluster tightness ($D$) and separation likelihood. Lower $\beta$ implies better decomposition quality.
+\end{itemize}
+
+    \begin{itemize}
+        \item [a. (10')] Prove that the following algorithm gives a LDD with approximation factor $\beta = O(\log n)$, with probability $\ge 1 - n ^ {-1}$.
+\begin{algorithm}[H]
+\caption{Low Diameter Decomposition (LDD)}
+\label{alg:ldd}
+\begin{algorithmic}[1]
+\Require Undirected graph $G=(V,E)$, target diameter $D > 0$
+\Ensure Vertex partition $\{V_1,\dots,V_k\}$ with $\mathrm{diam}(G[V_i]) \leq D$
+\State Initialize $\mathit{marked}[v] \gets \textsc{False}$ for all $v \in V$
+\State Sample $r \sim \mathrm{Geometric}(p)$ with $p = \min\big(1, \frac{4\log n}{D}\big)$
+\While{$\exists v \in V$ with $\neg\mathit{marked}[v]$}
+    \State Select arbitrary unmarked vertex $v_0 \in V$
+    \State Compute $B \gets \{u \in V \mid d_G(v_0,u) \leq r\}$
+    \State Create cluster $C \gets B$ 
+    \State $\mathit{marked}[u] \gets \textsc{True}$ for all $u \in C$
+    \State Add $C$ to output partition
+\EndWhile
+\State \Return the computed clustering
+\end{algorithmic}
+\end{algorithm}
+\noindent \textbf{Remarks}: The naive way to run LDD takes time $O(n ^ 3)$, since one need to run Dijsktra for $n$ times. However, there are ways to do LDD in $\tilde{O}(n ^ 2)$ time. You will get \textcolor{red}{10 Bonus Point} if you can find out. 
+    \end{itemize}
+
+
+We will use this tool to solve approximate ASPS problem. First, we will introduce Low Stretch Tree. 
+
+
+\begin{definition}
+    A randomized low-stretch tree of stretch  $\alpha$ for a graph $G=(V,E)$ is a probability distribution $\mathcal{D}$ over spanning trees of $G$ s.t.
+    \begin{enumerate}
+        \item $d_G(x, y) \le d_T(x, y)$, for all $T$ in the support $\mathcal{D}$.
+        \item $\mathbb{E}_{T\sim \mathcal{D}}[d_T(x, y)] \le \alpha \cdot d_G(x,y)$, $\forall x, y \in V$
+        
+    \end{enumerate}
+\end{definition}
+
+\begin{theorem}\label{LST}
+    For any metric space $M=(V, d)$, there exists an efficiently sampleable $\alpha_B$-stretch spanning tree distribution $\mathcal{D}_B$, where
+
+$$
+\alpha_B=O\left(\log n \log \Delta_M\right)
+$$
+
+$\Delta_M$ is defined as $\max_{x, y} d(x, y)$, we assume $\forall x\neq y, d(x, y) \ge 1$. 
+
+\end{theorem}
+
+We will prove theorem \ref{LST} by the following algorithm. 
+
+\begin{algorithm}[H]
+\caption{Low Stretch Tree Construction, LST$(M, \delta)$}
+\label{alg:lst}
+\begin{algorithmic}[1]
+\Require Metric space $M=(V,d)$, target diameter $D=2^\delta$
+\Ensure Spanning tree $T$ with low stretch.  \textbf{Invariant}: $\mathrm{diameter}(M) \leq 2^\delta$
+\If{$|V| = 1$}
+    \State \Return trivial tree containing the single point
+\EndIf
+\State Partition $V$ into clusters $C_1,\dots,C_t \gets \mathrm{LDD}(M, D/2)$ 
+\For{$j = 1$ \textbf{to} $t$}
+    \State Let $M_j$ be $M$ restricted to $C_j$
+    \State Recursively build $T_j \gets \mathrm{LST}(M_j, \delta-1)$
+\EndFor
+\State Connect roots $r_2,\dots,r_t$ to $r_1$ with edges of length $2^\delta$
+\State \Return final tree $T$ rooted at $r_1$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{lemma}\label{lemLST}
+    If the random tree $T$ returned by some call LST($M, \delta$) has root $r$, then 
+    \begin{enumerate}
+        \item every vertex $x$ in $T$ has distance $d(x, r) \le 2 ^ {\delta + 1}$
+        \item the expected distance between any $x, y\in T$ has $\mathbb{E}[d_T(x, y)] \le 8 \delta \beta d(x, y)$. (Recall that $\beta$ is the approximate factor in LDD) 
+    \end{enumerate}
+\end{lemma}
+
+If we can prove Lemma \ref{lemLST}, then one can see from Problem a that if $\beta = O(\log n)$, then with high probability, $d_T(x, y) \ge d(x, y)$ for any $x, y$, thus theorem \ref{LST} can be proved. 
+
+
+    \begin{itemize}
+        \item [b. (20')] Prove the Lemma \ref{lemLST}. 
+    \end{itemize}
+
+
+    
+    \begin{itemize}
+        \item [c. (10')] Prove the following theorem. 
+
+        \begin{theorem}
+            There's an algorithm that output $O(\log n\log \Delta)$ approximation of ASAP on an undirected graph in $\tilde{O}(n ^ 2)$ time, and success with probability $\ge 1 - \frac 1{\text{poly}(n)}$.
+        \end{theorem}
+
+
+        (This means, the algorithm output $d'(x, y)$ for any pair $x, y$, and satisfies $d(x, y) \le d'(x, y) \le \log n\log \Delta \cdot d(x, y)$, where $d(x, y)$ is the length of shortest path between $x, y$. )
+    \end{itemize}
+
+    % Actually, one can directly use LDD to get an approximate algorithm for ASAP, and achieve $O(\log n)$ approximation. 
+    \begin{itemize}
+        \item [d. (10')] Prove the following theorem. 
+
+        \begin{theorem}
+            There's an algorithm that output $O(\log n)$ approximation of ASAP on an undirected graph in $\tilde{O}(n ^ 2)$ time, and success with probability $\ge 1 - \frac 1{\text{poly}(n)}$.
+        \end{theorem}
+    \end{itemize}

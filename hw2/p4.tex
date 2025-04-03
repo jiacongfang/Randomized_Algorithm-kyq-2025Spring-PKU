@@ -3,3 +3,55 @@
     	
     \textit{[Hint: Consider the finite field $\mathbb F_{2^m} \cong \mathbb F_2^m$.]}
     \end{question}
+
+  \begin{answer}
+        Consider the finite field $\mathbb F_{2^m} \cong \mathbb F_2^m$, which means 
+        each element in $\mathbb F_{2^m}$ can be represented as a $m$-bits 0-1 vector.
+        Then consider the polynomial 
+        \begin{align*}
+            P(x) = a_0 + a_1 x + a_2 x^2 + \cdots + a_{d-1} x^{d-1} \in \mathbb F_{2^m}[x]
+        \end{align*}
+        where $a_i$ is chosen uniformly at random from $\mathbb F_{2^m}$. Thus, the total 
+        random bits we need is $dm$.
+
+        For any element $x_i(i \in \{0,1,\cdots, 2^m-1\})$ in $\mathbb F_{2^m}$, let random variable $X_i = P(x_i)$.
+        Then we will prove that $X_0, X_1, \cdots, X_{2^m-1}$ are $d$-wise independent.
+        
+        For any $d$ elements $x_{i_1}, x_{i_2}, \cdots, x_{i_d}$ in $\mathbb F_{2^m}$, in analyzing the probability
+        \[
+            \Pr[X_{i_1} = t_1, X_{i_2} = t_2, \cdots, X_{i_d} = t_d]
+        \]
+        we have the following equations: 
+        \begin{align*}
+            \forall k \in \{1, 2, \cdots, d\}, \quad \sum_{j=1}^{d} a_j x_{i_k}^j = t_k 
+        \end{align*}
+        which has a unique solution in $\mathbb F_{2^m}$, because the degree of $P(x)$ is $d-1$ and we can rewrite the above equations as
+        \begin{align*}
+            V = \begin{bmatrix}
+                1 & x_{i_1} & x_{i_1}^2 & \cdots & x_{i_1}^{d-1} \\
+                1 & x_{i_2} & x_{i_2}^2 & \cdots & x_{i_2}^{d-1} \\
+                \vdots & \vdots & \vdots & \cdots & \vdots \\
+                1 & x_{i_d} & x_{i_d}^2 & \cdots & x_{i_d}^{d-1}
+            \end{bmatrix}, \quad T = \begin{bmatrix}
+                t_1 \\
+                t_2 \\
+                \vdots \\
+                t_d
+            \end{bmatrix},
+            \quad  \text{and } A = \begin{bmatrix}
+                a_0 \\
+                a_1 \\
+                \vdots \\
+                a_{d-1}
+            \end{bmatrix}
+        \end{align*}
+        Notice that $V$ is a Vandermonde matrix with $x_{i} \neq x_{j}$ for $i \neq j$, which means $V$ is invertible.
+        Therefore, $VA = T$ has a unique solution $A = V^{-1}T$. Thus, since $a_i$ is chosen uniformly at random from $\mathbb F_{2^m}$, we have
+        \begin{align*}
+            \Pr[X_{i_1} = t_1, X_{i_2} = t_2, \cdots, X_{i_d} = t_d] = \frac{1}{|\mathbb F_{2^m}|^d} 
+        \end{align*}
+        which means $X_0, X_1, \cdots, X_{2^m-1}$ are $d$-wise independent. \ed
+  \end{answer}
+
+  \textbf{PS:} I input the problem to test DeepSeek, the sketch answer is almost correct..
+  

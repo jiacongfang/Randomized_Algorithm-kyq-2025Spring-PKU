@@ -35,7 +35,7 @@
 		And it's easy to verify that $F(x) \equiv 0$ iff $\circ$ is associative over $p^X$. Note that $\deg(F(x)) \le 3$. 
 		By Schwartz-Zippel Lemma, the error bound of this algorithm is 
 		\begin{align*}
-			\Pr[R\circ S\circ T = R\circ S\circ T|\text{$\circ$ is not associative}] \le \frac{3}{|\mathbb{F}_p|} = \frac{3}{p}.
+			\Pr[(R\circ S)\circ T = R\circ (S\circ T)|\text{$\circ$ is not associative}] \le \frac{3}{|\mathbb{F}_p|} = \frac{3}{p}.
 		\end{align*}
 		\item We first repeat \textbf{Algorithm 1} until finding $R, S, T$ such that $(R\circ S)\circ T\neq R\circ(S\circ T)$. 
 		And then find the counterexample $r_i, s_j, t_k \in X$ by the following algorithm:
@@ -69,6 +69,8 @@
 		where $R_1 = R \cup \{r^*\}, R_0 = R$, etc. The first step of \textbf{Algorithm \ref{algo:find}} terminates in $O(1)$ iterations, with a time complexity of $O(n^2)$. 
 
 		The following steps halve the size of $R/S/T$ in each iteration, terminating in $O(\log n)$ iterations, resulting in a time complexity of $O(n^2\log n)$. 
+
+		\textcolor{red}{The time complexity of the algorithm is $n^2 + n^2/2 + n^2/4 + \cdots = O(n^2)$.}
 		
 		Thus, the overall time complexity of the algorithm is $O(n^2\log n)$.
 	\end{enumerate}

@@ -1,11 +1,41 @@
-    \begin{question}{6 (10') (Median-of-Mean Trick)} 
+\begin{question}{6 (10') (Median-of-Mean Trick)} 
     Let $X_i,i=1,2,\cdots,2s+1,s>0$ be i.i.d random variables with $E\left[X_i\right]=\mu$. 
-    Assume each $X_i$ is concentrated well, i.e., $\Pr[|X_i-\mu|\geq \epsilon \mu]\leq \frac{1}{4}$. 
+    Assume each $X_i$ is concentrated well, i.e., $\Pr[|X_i-\mu|\geq \varepsilon \mu]\leq \frac{1}{4}$. 
     Prove 
     $$
-    \Pr[|\text{MED}(X_1,\cdots,X_{2s+1}) - \mu|\geq \epsilon\mu]\leq \exp\left(-\frac{s}{4}\right),
+    \Pr[|\text{MED}(X_1,\cdots,X_{2s+1}) - \mu|\geq \varepsilon\mu]\leq \exp\left(-\frac{s}{4}\right),
     $$ 
     where $\text{MED}(X_1,\cdots,X_{2s+1})$ is the median value of $X_1,\cdots,X_{2s+1}$.
-    
+
     \textit{[Hint: If the medium is biased, then more than half are biased. ]}
-    \end{question}
+\end{question}
+
+\begin{answer}
+    Define $T_i$ be the indicator random variable for $X_i$ being biased, i.e.,
+    \[
+        T_i = \mathbf{1} \{|X_i - \mu| \geq \varepsilon \mu\} = \begin{cases}
+            1, & \text{if } |X_i - \mu| \geq \varepsilon \mu \\
+            0, & \text{otherwise}
+        \end{cases}
+    \]
+    Then $\Pr[T_i = 1] \leq 1/4$, and $\E[T_i] = \Pr[T_i = 1] \leq 1/4$. Motivated by the hint, we have 
+    \begin{align*}
+        \Pr\left[|\text{MED}(X_1,\cdots,X_{2s+1}) - \mu| \geq \varepsilon \mu\right] = \Pr\left[\sum_{i=1}^{2s+1} T_i \ge s+1\right]
+    \end{align*}
+    Denote 
+    \begin{align*}
+        T = \frac{1}{2s+1} \sum_{i=1}^{2s+1} T_i \implies \E[T] \le \frac{1}{4}. 
+    \end{align*}
+    Then we can apply Chernoff bound to get
+    \begin{align*}
+        \Pr\left[\sum_{i=1}^{2s+1} T_i \ge s+1\right] &= \Pr\left[T - \frac{1}{4} \ge \frac{s+1}{2s+1} - \frac{1}{4}\right] \le \Pr\left[T - \E[T] \ge \frac{2s+3}{4(2s+1)}\right] \\
+        \text{(Chernoff Bound) }&\le \exp\left(-2\cdot (2s+1) \cdot \frac{(2s+3)^2}{16(2s+1)^2}\right) = \exp\left(-\frac{(2s+3)^2}{8(2s+1)}\right) \\
+        &= \exp\left(-\frac{s}{4} - \frac{2s+5}{2(2s+1)}\right) \\
+        &\le \exp\left(-\frac{s}{4}\right).
+    \end{align*}
+    Therefore, we have
+    \[
+        \Pr\left[|\text{MED}(X_1,\cdots,X_{2s+1}) - \mu| \geq \varepsilon \mu\right] \leq \exp\left(-\frac{s}{4}\right).
+    \]
+    \ed
+\end{answer}
