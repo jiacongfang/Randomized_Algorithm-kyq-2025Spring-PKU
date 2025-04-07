@@ -8,7 +8,7 @@
 f_M(x; \theta) := \sum_{j=1}^M a_j \sigma(w_j^{\top} x),
 \]
 
-where \( \theta = \{a_1, \dots, a_M, w_1, \dots, w_M\} \) denotes the parameters of the network, \( a_j \in \mathbb{R} \) are the coefficients, and \( w_j \in \mathbb{R}^d \) are the weights associated with the \( j \)-th neuron. Here, \( \sigma:\mathbb{R}\rightarrow\mathbb{R} \) is a non-linear activation function, such as ReLU or sigmoid.
+where \( \theta = \{a_1, \dots, a_M, w_1, \dots, w_M\} \) denotes the parameters of the network, \( a_j \in \mathbb{R}\setminus\{0\} \) are the non-zero coefficients, and \( w_j \in \mathbb{R}^d \) are the weights associated with the \( j \)-th neuron. Here, \( \sigma:\mathbb{R}\rightarrow\mathbb{R}_{\geq 0} \) denotes ReLU activation function that is defined as $\sigma(\cdot) = \operatorname{max}\{0, \cdot\}$.
 \end{definition}
 
 \begin{definition}[Parameter Norm]
@@ -28,7 +28,7 @@ Let \( \pi = \mathrm{Unif}(\mathbb{S}^{d-1}) \) denote the uniform distribution 
     For any integer \( m \in \mathbb{N} \), there exists a sparse vector \( \tilde{a} = (\tilde{a}_1, \dots, \tilde{a}_M) \) such that \( \|\tilde{a}\|_0 = m \), i.e., the vector \( \tilde{a} \) contains exactly \( m \) non-zero entries, which satisfies the following approximation bound:
 
 \[
-\mathbb{E}_{x \sim \pi} \left( \sum_{j=1}^M \tilde{a}_j \sigma(w_j^{\top} x) - \sum_{j=1}^M a_j \sigma(w_j^{\top} x) \right)^2 \lesssim \frac{\|\theta\|_{\mathcal{P}}^2}{dm}.
+\E_{x \sim \pi} \left( \sum_{j=1}^M \tilde{a}_j \sigma(w_j^{\top} x) - \sum_{j=1}^M a_j \sigma(w_j^{\top} x) \right)^2 \lesssim \frac{\|\theta\|_{\mathcal{P}}^2}{dm}.
 \]
 \end{theorem}
 
@@ -39,3 +39,73 @@ Let \( \pi = \mathrm{Unif}(\mathbb{S}^{d-1}) \) denote the uniform distribution 
     In essence, this result demonstrates that it is possible to approximate the network with a sparse representation without incurring significant loss in performance, provided the number of selected neurons \( m \) is sufficiently large relative to the network's parameter norm $\|\theta\|_{\mathcal{P}}$, and the size of the input space \( d \).
 \end{remark}
 
+\begin{answer}
+    We try to sample $\tilde{a}$ and construct an unbiased estimator whose expectation is $f_M(x; \theta)$.
+    For $j \in [M]$, we define the following probability mass function (Denote as distribution $\mathcal{D}_M$).
+    \begin{align*}
+        p_j = \frac{|a_j|\cdot\norm{w_j}_2}{\norm{\theta}_{\mathcal{P}}} \quad \text{and } \sum_{j=1}^M p_j = 1.
+    \end{align*}
+    Then we can sample $m$ neurons from $M$ neurons with $\{p_j\}_{j=1}^M$ independently, i.e., 
+    \begin{align*}
+        \text{sample } j_1, j_2, \cdots, j_m \overset{i.i.d}{\sim} \mathcal{D}_M.
+    \end{align*}
+    Then we can define the following estimator, for $ t\in [m]$,
+    \begin{align*}
+        Y_t(x) := \frac{\text{sign}(a_{j_t})}{\norm{w_{j_t}}_2} \cdot \sigma(w_{j_t}^{\top} x) \quad \text{and } \tilde{f}(x) := c\cdot \sum_{t=1}^m Y_t(x).
+    \end{align*}
+    where $c$ is a constant waiting to be determined to makes sure that $\tilde{f}(x)$ is unbiased. Then we can assign $\tilde{a}$ as follows:
+    \begin{align*}
+        \tilde{a}_{i} = c\cdot \frac{\text{sign}(a_{i})}{\norm{w_{i}}_2} \text{ for } i \in \{j_t\}_{t=1}^m, \text{ and } \tilde{a}_i = 0 \text{ otherwise.}
+    \end{align*}
+    Notice that $j_1, j_2, \cdots, j_m$ may be not distinct, but we can merge those terms into a single nonzero entry. Thus, here we have $\norm{\tilde{a}}_0 \le m$ (it's a weaker condition than $\norm{\tilde{a}}_0 = m$ actually).
+
+    Now we determine the constant $c$ first. Given $x$, we have:
+    \begin{align*}
+        \E_{j_t \sim \mathcal{D}_M}\left[Y_t(x)\right] &= \sum_{j=1}^{M} p_j \cdot \frac{\text{sign}(a_{j})}{\norm{w_{j}}_2} \sigma(w_{j}^{\top} x) \\
+        & = \sum_{j=1}^{M} \frac{|a_j| \norm{w_j}_2}{\norm{\theta}_{\mathcal{P}}} \cdot \frac{\text{sign}(a_{j})}{\norm{w_{j}}_2} \sigma(w_{j}^{\top} x) \\
+        &= \frac{1}{\norm{\theta}_{\mathcal{P}}} \sum_{j=1}^{M} a_j \sigma(w_{j}^{\top} x) \quad (\text{use sign}(a_j)\cdot|a_j| = a_j) \\
+        &= \frac{1}{\norm{\theta}_{\mathcal{P}}} f_M(x; \theta).
+    \end{align*}
+    Then (let  $c = \norm{\theta}_{\mathcal{P}} / m$)
+    \begin{align*}
+        \E_{j_t \sim \mathcal{D}_M}\left[\tilde{f}(x)\right] &= c\cdot \sum_{t=1}^m \E_{j_t \sim \mathcal{D}_M}\left[Y_t(x)\right] = \frac{c\cdot m}{\norm{\theta}_{\mathcal{P}}} f_M(x; \theta) = f_M(x; \theta).
+    \end{align*}
+    Therefore, $\tilde{f}(x)$ is an unbiased estimator of $f_M(x; \theta)$ over $\mathcal{D}_M$.
+
+    Look back the error term we want to bound, notice that:
+    \begin{align*}
+        &\quad \E_{x \sim \pi} \left( \sum_{j=1}^M \tilde{a}_j \sigma(w_j^{\top} x) - \sum_{j=1}^M a_j \sigma(w_j^{\top} x) \right)^2  \\
+        &= \E_{x \sim \pi} \left[\left(\tilde{f}(x) - \E_{j_t \sim \mathcal{D}_M}[\tilde{f}(x)]\right)^2\right] = \E_{x \sim \pi} \left[\Var_{j_t \sim \mathcal{D}_M}\left( \tilde{f}(x) \right)\right] \\
+        &= \E_{x\sim \pi} \left[\frac{\norm{\theta}_\mathcal{P}^2 \cdot m}{m^2} \Var_{j_t \sim \mathcal{D}_M}\left(Y_t(x)\right)\right] \quad \text{ ($t$ is a fixed index here)} \\
+        &= \frac{\norm{\theta}_{\mathcal{P}}^2}{m} \cdot \E_{x\sim \pi} \left[\E_{j_t\sim \mathcal{D}_M}\left[\left(Y_t(x)\right)^2\right] - \left(\E_{j_t\sim \mathcal{D}_M} [Y_t(x)]\right)^2\right] \\
+        &\le \frac{\norm{\theta}_{\mathcal{P}}^2}{m} \cdot \E_{x\sim \pi} \left[\E_{j_t\sim \mathcal{D}_M}\left[\left(Y_t(x)\right)^2\right]\right]  \\
+        &= \frac{\norm{\theta}_{\mathcal{P}}^2}{m} \cdot  \E_{j_t\sim \mathcal{D}_M}\left[\E_{x\sim \pi}\left[\left(Y_t(x)\right)^2\right]\right].
+    \end{align*}
+    The inequality holds because $\E_{j_t\sim \mathcal{D}_M} [Y_t(x)]^2 = f^2_M(x; \theta) / \norm{\theta}_2^2 \ge 0$.
+    Then given $j_t$, we try to calculate 
+    \begin{align*}
+        \E_{x\sim \pi}\left[\left(\sigma(w_{j_t}^\top x)\right)^2\right] &= \int_{\mathbb{S}^{d-1}} \left(\max\{0, w_{j_t}^\top x\}\right)^2 \cdot d\pi(x) \\
+        &= \int_{\{w_{j_t}^\top x \ge 0\}} \left(w_{j_t}^\top x\right)^2 \cdot d\pi(x) \\
+        &= \frac{1}{2} \int_{\mathbb{S}^{d-1}} \left(w_{j_t}^\top x\right)^2 \cdot d\pi(x) \quad \text{($w_{j_t}^\top x$ is symmetric over $\mathbb{S}^{d-1}$)} \\
+        &= \frac{1}{2} \E_{x\sim \pi} \left[\left(w_{j_t}^\top x\right)^2\right] \\
+        &= \frac{\norm{w_{j_t}}_2^2}{2} \cdot \E_{x\sim \pi} \left[\left(u^\top x\right)^2\right] \quad \text{(where $u = \frac{w_{j_t}}{\norm{w_{j_t}}_2}$)}.
+    \end{align*}
+    We have $\E_{x\sim \pi} \left[\left(u^\top x\right)^2\right] = 1/d$ (it will be proved at the end, skip it for now). Therefore,
+    \begin{align*}
+        \E_{x\sim \pi}\left[\left(\sigma(w_{j_t}^\top x)\right)^2\right] = \frac{\norm{w_{j_t}}_2^2}{2d}. \implies \E_{x\sim \pi}\left[Y_t(x)^2\right] = \frac{\norm{w_{j_t}}_2^2}{2d} \cdot \frac{\text{sign}(a_{j_t})^2}{\norm{w_{j_t}}_2^2} = \frac{1}{2d}.
+    \end{align*}
+    Then we have
+    \begin{align*}
+        \E_{x\sim \pi} \left( \sum_{j=1}^M \tilde{a}_j \sigma(w_j^{\top} x) - \sum_{j=1}^M a_j \sigma(w_j^{\top} x) \right)^2 &\le \frac{\norm{\theta}_{\mathcal{P}}^2}{m} \cdot  \E_{j_t\sim \mathcal{D}_M}\left[\frac{1}{2d}\right] = \frac{\norm{\theta}_{\mathcal{P}}^2}{2dm} \lesssim \frac{\norm{\theta}_{\mathcal{P}}^2}{dm}.
+    \end{align*}
+    At the end, we prove that 
+    \[
+        \E_{x\sim \pi} \left[\left(u^\top x\right)^2\right] = 1/d.
+    \]
+    Expand $u$ to $d$-orthonormal basis of $\mathbb{R}^d$, denoted as $\{e_1, e_2, \cdots, e_d\}$, then for any given $x \in \mathbb{S}^{d-1}$, we have
+    \begin{gather*}
+        x = \sum_{i=1}^d \alpha_i e_i \quad \text{where } \sum_{i=1}^d \alpha_i^2 = 1, \implies \sum_{i=1}^{d} (e_i^\top u)^2 = \sum_{i=1}^{d} \alpha_i^2 = 1 \\
+        \implies 1 = \E_{x\sim \pi} \left[\sum_{i=1}^{d} (e_i^\top u)^2 \right] = d \cdot \E_{x\sim \pi} \left[\left(u^\top x\right)^2\right]  \implies \E_{x\sim \pi} \left[\left(u^\top x\right)^2\right] = \frac{1}{d}.
+    \end{gather*}
+    \ed
+\end{answer}

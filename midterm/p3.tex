@@ -1,11 +1,11 @@
 \section*{Problem 3 (50') (Low Diameter Decomposition)} 
 In this problem, you'll learn Low Diameter Decomposition, and use it to give approximate algorithm for some fundamental graph problem like Tree Embedding, All Pair Shortest Path (APSP).
 
-
+\textcolor{red}{In this problem, the graph can be seen as weighted graph with all the weight being positive integer. }
 \begin{definition}[Low Diameter Decomposition (LDD)]
     Given an undirected graph $G = (V, E)$, a \textbf{Low Diameter Decomposition (LDD)} scheme with approximation factor $\beta$ and diameter bound $D$ is a randomized algorithm that partitions $V$ into disjoint clusters $V_1, V_2, \dots, V_k$ satisfying:
     \begin{enumerate}
-        \item \textbf{Bounded Diameter}: For each $V_i$, the induced subgraph $G[V_i]$ has diameter $\leq D$.
+        \item \textbf{Bounded Diameter}: For each $V_i$, the diameter of $G[V_i]$  $\leq D$.
         \item \textbf{Separation Probability}: For any $x, y \in V$,
         $$
             \Pr\big[\text{$x$ and $y$ lie in different clusters}\big] \leq \beta \cdot \frac{d_G(x, y)}{D},
@@ -29,10 +29,10 @@ In this problem, you'll learn Low Diameter Decomposition, and use it to give app
 \Require Undirected graph $G=(V,E)$, target diameter $D > 0$
 \Ensure Vertex partition $\{V_1,\dots,V_k\}$ with $\mathrm{diam}(G[V_i]) \leq D$
 \State Initialize $\mathit{marked}[v] \gets \textsc{False}$ for all $v \in V$
-\State Sample $r \sim \mathrm{Geometric}(p)$ with $p = \min\big(1, \frac{4\log n}{D}\big)$
 \While{$\exists v \in V$ with $\neg\mathit{marked}[v]$}
     \State Select arbitrary unmarked vertex $v_0 \in V$
-    \State Compute $B \gets \{u \in V \mid d_G(v_0,u) \leq r\}$
+    \State \textcolor{red}{Sample $R_{v_0} \sim \mathrm{Geometric}(p)$ with $p = \min\big(1, \frac{4\log_e n}{D}\big)$.}
+    \State \textcolor{red}{Compute $B \gets \{u \in V \mid \lnot marked[u] \land  d_G(v_0,u) \leq R_{v_0}\}$}
     \State Create cluster $C \gets B$ 
     \State $\mathit{marked}[u] \gets \textsc{True}$ for all $u \in C$
     \State Add $C$ to output partition
@@ -44,7 +44,7 @@ In this problem, you'll learn Low Diameter Decomposition, and use it to give app
     \end{itemize}
 
 
-We will use this tool to solve approximate ASPS problem. First, we will introduce Low Stretch Tree. 
+We will use this tool to solve approximate APSP problem. First, we will introduce Low Stretch Tree. 
 
 
 \begin{definition}
@@ -91,7 +91,7 @@ We will prove theorem \ref{LST} by the following algorithm.
 \begin{lemma}\label{lemLST}
     If the random tree $T$ returned by some call LST($M, \delta$) has root $r$, then 
     \begin{enumerate}
-        \item every vertex $x$ in $T$ has distance $d(x, r) \le 2 ^ {\delta + 1}$
+        \item every vertex $x$ in $T$ has distance $d_{\textcolor{red}{T}}(x, r) \le 2 ^ {\delta + 1}$
         \item the expected distance between any $x, y\in T$ has $\mathbb{E}[d_T(x, y)] \le 8 \delta \beta d(x, y)$. (Recall that $\beta$ is the approximate factor in LDD) 
     \end{enumerate}
 \end{lemma}
@@ -109,7 +109,7 @@ If we can prove Lemma \ref{lemLST}, then one can see from Problem a that if $\be
         \item [c. (10')] Prove the following theorem. 
 
         \begin{theorem}
-            There's an algorithm that output $O(\log n\log \Delta)$ approximation of ASAP on an undirected graph in $\tilde{O}(n ^ 2)$ time, and success with probability $\ge 1 - \frac 1{\text{poly}(n)}$.
+            There's an algorithm that output $O(\log n\log \Delta)$ approximation of APSP on an undirected graph in $\tilde{O}(n ^ 2)$ time, and success with probability $\ge 1 - \frac 1{\text{poly}(n)}$.
         \end{theorem}
 
 

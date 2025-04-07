@@ -1,4 +1,3 @@
-    
 \section*{Problem 1 (10')}
 For today's dinner, you are making a decision between two restaurants, \textit{Yannan} and \textit{Shaoyuan}. You know that one of them is a strictly better choice under all circumstances, and everyone prefers it to the other. However, you are the only person in the world who has no idea \textit{which} is the better one. You decide to ask some folks on \texttt{treehole.pku.edu.cn} to give scores for the two restaurants. According to the following responses, which one will you choose?
 \begin{itemize}
@@ -27,3 +26,118 @@ We need to design a potentially randomized algorithm $\mathcal{A}$, whose output
 \end{itemize}
 
 \textbf{Direction:} \textit{For each $i$, your half-blind algorithms can decide freely which one of $\{x_i, y_i\}$ to observe. However, it can only observe one of the two values. You should give proofs for the error bounds.}
+
+\newpage
+\begin{answer}
+\begin{enumerate}[label=\alph*).]
+    \item Consider the following algorithm $\mathcal{A}_1$:
+    \begin{algo}
+        \caption{Half-bind Algorithm $\mathcal{A}_1$}
+        \label{alg:half-blind-1}
+        \begin{algorithmic}[1]
+            \Require{ $x_1, y_1 \in \mathbb{R}$}
+            \Ensure{ Case 1 $(x_1 > y_1)$ or Case 0 $(x_1 < y_1)$.}
+            \State Randomly query $x_1$ or $y_1$ with equal probability
+            \If {$x_1$ is queried}
+                \State Randomly sample $z_x \sim \mathcal{N}(0,1)$
+                \If {$x_1 > z_x$}
+                    \State Output Case 1 $(x_1 > y_1)$.
+                \Else
+                    \State Output Case 0 $(x_1 < y_1)$.
+                \EndIf
+            \Else
+                \State Randomly sample $z_y \sim \mathcal{N}(0,1)$
+                \If {$y_1 > z_y$}
+                    \State Output Case 0 $(x_1 < y_1)$.
+                \Else
+                    \State Output Case 1 $(x_1 > y_1)$.
+                \EndIf
+            \EndIf
+        \end{algorithmic}
+    \end{algo}
+    For any real numbers $x, y$, without loss of generatelity, we assume $x > y$ here.
+    \begin{align*}
+        \Pr\left[\ \mathcal{A}_1\text{ is correct } | \ x_1 = x, \  y_1 = y \ \right] &= \frac{1}{2} \left(\Pr_{z_x\sim \mathcal{N}(0,1)}[x > z_x] + \Pr_{z_y\sim \mathcal{N}(0,1)}[y < z_y]\right) \\
+        &= \frac{1}{2}\left(\Phi(x) + 1 - \Phi(y)\right)  > \frac{1}{2}.
+    \end{align*}
+    where $\Phi(x)$ is the cumulative distribution function of the standard normal distribution. The last inequality holds because $\Phi(x) - \Phi(y) > 0$ when $x > y$.
+    \item For any $i \in [n]$, we first define the following algorithm $\mathcal{A}_i$:
+    \begin{algo}
+        \caption{Half-bind Algorithm $\mathcal{A}_i$}
+        \label{alg:half-blind-i}
+        \begin{algorithmic}[1]
+            \Require{ $x_i, y_i \in [0,100]$}
+            \Ensure{ Case 1 $(x_i > y_i)$ or Case 0 $(x_i < y_i)$.}
+            \State Randomly query $x_i$ or $y_i$ with equal probability
+            \If {$x_i$ is queried}
+                \State Randomly sample $z_x \sim \mathcal{U}(0,100)$    \Comment{Uniform distribution over $[0,100]$}
+                \If {$x_i > z_x$}
+                    \State Output Case 1 $(x_i > y_i)$.
+                \Else
+                    \State Output Case 0 $(x_i < y_i)$.
+                \EndIf
+            \Else
+                \State Randomly sample $z_y \sim \mathcal{U}(0,100)$
+                \If {$y_i > z_y$}
+                    \State Output Case 0 $(x_i < y_i)$.
+                \Else
+                    \State Output Case 1 $(x_i > y_i)$.
+                \EndIf
+            \EndIf
+        \end{algorithmic}
+    \end{algo}
+    Then we can design the following algorithm $\mathcal{A}$:
+    \begin{algo}
+        \caption{Half-bind Algorithm $\mathcal{A}$}
+        \label{alg:half-blind}
+        \begin{algorithmic}[1]
+            \Require{ $(x_1, \cdots, x_n), (y_1, \cdots, y_n) \in [0,100]^n$ }
+            \Ensure{ Case 1 $(x_i > y_i), \forall i\in [n]$ or Case 0 $(x_i < y_i), \forall i \in [n]$.}
+            \State $\text{num}_1 \gets 0, ~ \text{num}_0 \gets 0$ \Comment{Count of Case 1 and Case 0}
+            \For {$i = 1$ to $n$}
+                \State Run Algorithm $\mathcal{A}_i$ on $(x_i, y_i)$
+                \If {Algorithm $\mathcal{A}_i$ outputs Case 1}
+                    \State $\text{num}_1 \gets \text{num}_1 + 1$
+                \Else   
+                    \State $\text{num}_0 \gets \text{num}_0 + 1$
+                \EndIf
+            \EndFor
+            \If {$\text{num}_1 > n/2$}
+                \State Output Case 1 $(x_i > y_i), \forall i\in [n]$.
+            \Else
+                \State Output Case 0 $(x_i < y_i), \forall i\in [n]$.
+            \EndIf
+        \end{algorithmic}
+    \end{algo}
+    \textbf{Error Bounds Analysis:} Without loss of generality, we assume $x_i > y_i$ for all $i \in [n]$ and $n = 2k + 1$ for $k \in \mathbb{N}^*$.
+    (When $n$ is even, we can simply ignore $x_{n}$ and $y_{n}$ and only run $\mathcal{A}$ on the first $n-1$ pairs, it won't affect the error bounds to much.)
+    
+    For $i \in [n]$, let random variable $X_i := \mathbf{1}[\mathcal{A}_i \text{ outputs } x_i > y_i]$. 
+    We first analyse Algorithm $\mathcal{A}_i$, similar to the analysis in part a, we have:
+    \begin{align*}
+        \Pr\left[\ \mathcal{A}_i\text{ is correct } | x_i, y_i\right] &= \frac{1}{2} \left(\Pr_{z_x\sim \mathcal{U}(0,100)}[x_i > z_x] + \Pr_{z_y\sim \mathcal{U}(0,100)}[y_i < z_y]\right) \\
+        &= \frac{1}{2}\left(1 + \frac{|x_i - y_i|}{100}\right) \ge \frac{1}{2} + \frac{1}{200} = \frac{101}{200}.
+    \end{align*}
+    Thus, we have $\E[X_i] \ge 101/200$. Therefore, the probability that $\mathcal{A}$ makes a mistake can be bounded as follows:
+    \begin{align*}
+        \Pr\left[\mathcal{A} \text{ is wrong }\right] &= \Pr\left[\sum_{i=1}^{n} X_i \le \frac{n}{2}\right] = \Pr\left[\frac{1}{n} \sum_{i=1}^{n} X_i - \frac{101}{200} \le - \frac{1}{200}\right] \\
+        &\le \Pr\left[\frac{1}{n} \sum_{i=1}^{n} X_i - \E[X_i] \le -\frac{1}{200}\right] \\
+        &\le \exp\left(- 2n \cdot \frac{1}{200^2}\right) \quad \text{(Chernoff Bound)} \\
+        &\le \frac{1}{2^{p(n)}} \quad \text{(for sufficiently large $n$, where $p(n) = \Omega(n)$)}.
+    \end{align*}
+    Then we can conclude that:
+    \begin{align}
+        \label{eq:1}
+        \Pr\left[\mathcal{A} \text{ is correct }\right] &= 1 - \Pr\left[\mathcal{A} \text{ is wrong }\right] \ge 1 - \frac{1}{2^{p(n)}}.
+    \end{align}
+    where $p(n) = \Omega(n)$. 
+
+    \textbf{Note:} The error bound can be analysed by \textbf{Median Trick}. Each run of $\mathcal{A}_i$ is a Bernoulli trial with success probability $p_i$ greater than $101/200$. Then
+    \begin{align*}
+        \Pr\left[\mathcal{A}_i \text{ success}\right] \ge \frac{101}{200} \implies \Pr\left[\#\{\mathcal{A}_i \text{ success in } \mathcal{A}\} \le \frac{n}{2}\right] \le \left(\frac{101}{200}\right)^{n/2}
+    \end{align*}
+    Thus, \eqref{eq:1} holds for $p(n) = \Omega(n)$ with sufficiently large $n$.
+\end{enumerate}
+\ed
+
+\end{answer}

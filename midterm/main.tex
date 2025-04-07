@@ -25,6 +25,9 @@
 \usepackage{algorithm}
 \usepackage{algorithmicx}
 \usepackage[noend]{algpseudocode}
+\AtBeginEnvironment{algorithmic}{\renewcommand{\algorithmicensure}{\textbf{Output:}}}
+\AtBeginEnvironment{algorithmic}{\renewcommand{\algorithmicrequire}{\textbf{Input:}}}
+
 
 % ========== 超链接与引用 ==========
 \usepackage{hyperref}
@@ -54,12 +57,18 @@
 \newenvironment{answer}[1][Answer]{\begin{trivlist}
 \item[\hskip \labelsep {\bfseries #1.}\hskip \labelsep]}{\hfill$\lhd$\end{trivlist}}
 
-\newcommand\E{\mathbb{E}}
+\DeclareMathOperator*{\E}{\mathbb{E}}
+\DeclareMathOperator*{\Var}{Var}
+
+\newcommand{\ed}{\textbf{Q.E.D.}}
+
 
 \newcommand{\ta}[1]{{\color{red!100!teal} [{\bf TA's Note:} #1]}}
 
 \usepackage{lastpage}
 \usepackage{datetime}
+
+\usepackage{enumitem}
 
 
 % ========= 跨页代码环境 ==========
@@ -102,8 +111,8 @@
 
 
     \begin{center}
-        {\LARGE \bf Midterm}\\
-        {Due: 2025-4-10 23:59 \quad$|$\quad 4 Questions, 100+10 Pts}\\
+        {\LARGE \bf Midterm Exam}\\
+        {Due: 2025-4-10 11:59 \quad$|$\quad 4 Questions, 100+10 Pts}\\
         {Name: Jiacong Fang, ID: 2200017849}
     \end{center}
 

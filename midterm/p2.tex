@@ -17,3 +17,92 @@
     \begin{itemize}
         \item [d. (5')] Based on the values of $C(\cdot,\cdot)$, design an algorithm which outputs a uniform sample of $S'$. Your algorithm should run in $O(n)$ time (excluding the time cost by the random generator).
     \end{itemize}
+
+\begin{answer}
+    \begin{enumerate}[label=\alph*).]
+        \item For any $\bm x = (x_1, x_2, \cdots, x_n) \in S$, we have 
+        \begin{align*}
+            \sum_{i=1}^{n} a_i x_i \le b \iff \sum_{i=1}^{n} \frac{n^2 a_i}{b} x_i \le n^2 
+        \end{align*}
+        And notice that
+        \begin{align*}
+            \sum_{i=1}^{n} a'_i x_i = \sum_{i=1}^{n} \left\lfloor\frac{n^2 a_i}{b}\right\rfloor x_i \le \sum_{i=1}^{n} \frac{n^2 a_i}{b} x_i \le n^2
+        \end{align*}
+        Then we have $\bm x \in S'$ which implies $S \subseteq S'$.
+        \item Define $k$ be s.t. $ a_j \le b/n$ for $j \le k$ and either $k = n$ or $a_{k+1} > b/n$. Let $C = \{0,1\}^k \times \{0\}^{n-k}$. 
+        If $x \in C$ then 
+        \begin{align*}
+            \sum_{i=1}^{n} a_i x_i \le \sum_{i=1}^{k} a_i x_i \le\frac{bk}{n}  \le n \implies C \subseteq S
+        \end{align*}
+        For any $\bm x \in S'\setminus S$, then there exists $p = p(x) \in \mathbb{N}^*$, s.t. $x_p = 1$ and $p \notin [k]$ (Otherwise $x \in C \subseteq S$ which is a contradiction).
+        Then the sheohorn(or a mapping) from $S'$ to $S$ is defined as:
+        \begin{align*}
+            f: S' &\to \{0,1\}^n \\
+            f(\bm x) &\mapsto \begin{cases}
+                \bm x & \text{if } x \in S \\
+                \bm y & \text{if } x \in S' \setminus S 
+            \end{cases} \\
+            &\text{where }  y_j = x_j, \forall j \ne p \text{ and } y_p = 0.
+        \end{align*}
+        We now prove that for any $\bm x \in S'\setminus S$, $\bm y = f(\bm x) \in S$. Let $\delta_i = a_i - a'_i$, then we have
+        \begin{align*}
+            \sum_{i=1}^{n} a_i y_i &= \frac{b}{n^2} \sum_{i=1}^{n} (a_i' + \delta_i) y_i = \frac{b}{n^2} \left(\sum_{i=1}^{n} a'_i y_i + \sum_{i=1}^{n}\delta_i y_i \right) \\
+            &= \frac{b}{n^2} \left(\sum_{i=1}^{n} a'_i x_i - a'_p + \sum_{i=1}^{n}\delta_i y_i \right) \\
+            &\le \frac{b}{n^2} (n^2 - n + n)  = b.
+        \end{align*}
+        The last inequality holds because $\delta \in [0, 1)$ and $p \notin [k] \implies a_p > b/n \implies a'_p \ge n$. Therefore, $\bm y \in S$ which implies $|S'| \le (n+1)|S|$.
+
+        \item The dynamic programming algorithm is as follows:
+        \begin{algo}
+            \caption{Dynamic Programming for $|S'|$}
+            \label{alg:2.dp}
+            \begin{algorithmic}[1]
+                \Require{ $a'_1, a'_2, \cdots, a'_n \in [0,n^2]$}
+                \Ensure { $C(i,j)$ for all $0\leq i\leq n$ and $0\leq j\leq n^2$.}
+                \State $\forall 0\le j \le n^2$, initialize $C(\cdot, \cdot)$ with: 
+                \begin{align*}
+                    C(1, j) = \begin{cases}
+                        2 & \text{if } j \ge a'_1 \\
+                        1 & \text{otherwise}
+                    \end{cases}
+                \end{align*}
+                \For {$i = 2$ to $n$} \Comment{Compute the table $C$ using following recursion.}
+                    \For {$j = 0$ to $n^2$}
+                        \If {$j < a'_i$}
+                            \State $C(i,j) = C(i-1,j)$
+                        \Else
+                            \State $C(i,j) = C(i-1,j) + C(i-1,j-a'_i)$
+                        \EndIf
+                    \EndFor
+                \EndFor
+            \end{algorithmic}
+        \end{algo}
+        The time complexity of the algorithm is $O(n^3)$. 
+        \item We can determine a uniform sample from $S'$ by tracing back probabilistically from $C(n,n^2)$ as following:
+        \begin{algo}
+            \caption{Uniform sampling from $S'$}
+            \label{alg:2.sample}
+            \begin{algorithmic}[1]
+                \Require{ $C(i,j)$ for all $0\leq i\leq n$ and $0\leq j\leq n^2$.}
+                \Ensure { A uniform sample from $S'$.}
+                \State $j \gets n^2$
+                \For{ $i = n$ to $2$}
+                    \State $x_i \gets 0$ with prob. $C(i-1,j)/C(i,j)$ else $x_i \gets 1$ with the remaining prob.
+                    \If {$x_i = 1$}
+                        \State $j \gets j - a'_i$ \Comment{Update the remaining capacity}
+                    \Else 
+                        \State $j \gets j$ 
+                    \EndIf
+                \EndFor
+                \If{ $C(1, j) = 2$} \Comment{Handle the special case when $i = 1$}
+                    \State $x_1 \gets 0$ and $x_1 \gets 1$ with equal prob.
+                \Else
+                    \State $x_1 \gets 0$ 
+                \EndIf
+                \State \textbf{Output} $(x_1, x_2, \cdots, x_n)$.
+            \end{algorithmic}                
+        \end{algo}
+        The time complexity of the algorithm is $O(n)$ beacuse each iteration of the for loop takes $O(1)$ time, and the loop runs $n$ times.
+    \end{enumerate}
+    \ed
+\end{answer}
