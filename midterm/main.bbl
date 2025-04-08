@@ -1,0 +1,18 @@
+\begin{thebibliography}{1}
+
+\bibitem{CKR_Decomposition}
+Gruia Calinescu, Howard Karloff, and Yuval Rabani.
+\newblock Approximation algorithms for the 0-extension problem.
+\newblock {\em SIAM Journal on Computing}, 34(2):358--372, 2005.
+
+\bibitem{FRT_Approximation}
+Jittat Fakcharoenphol, Satish Rao, and Kunal Talwar.
+\newblock A tight bound on approximating arbitrary metrics by tree metrics.
+\newblock In {\em Proceedings of the Thirty-Fifth Annual ACM Symposium on
+  Theory of Computing}, page 448–455, 2003.
+
+\bibitem{mendel2009fastckrpartitionssparse}
+Manor Mendel and Chaya Schwob.
+\newblock Fast c-k-r partitions of sparse graphs, 2009.
+
+\end{thebibliography}
