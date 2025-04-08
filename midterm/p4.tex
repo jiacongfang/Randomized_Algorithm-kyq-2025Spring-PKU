@@ -74,14 +74,15 @@ Let \( \pi = \mathrm{Unif}(\mathbb{S}^{d-1}) \) denote the uniform distribution 
 
     Look back the error term we want to bound, notice that:
     \begin{align*}
-        &\quad \E_{x \sim \pi} \left( \sum_{j=1}^M \tilde{a}_j \sigma(w_j^{\top} x) - \sum_{j=1}^M a_j \sigma(w_j^{\top} x) \right)^2  \\
-        &= \E_{x \sim \pi} \left[\left(\tilde{f}(x) - \E_{j_t \sim \mathcal{D}_M}[\tilde{f}(x)]\right)^2\right] = \E_{x \sim \pi} \left[\Var_{j_t \sim \mathcal{D}_M}\left( \tilde{f}(x) \right)\right] \\
-        &= \E_{x\sim \pi} \left[\frac{\norm{\theta}_\mathcal{P}^2 \cdot m}{m^2} \Var_{j_t \sim \mathcal{D}_M}\left(Y_t(x)\right)\right] \quad \text{ ($t$ is a fixed index here)} \\
+        &\E_{x \sim \pi} \left( \sum_{j=1}^M \tilde{a}_j \sigma(w_j^{\top} x) - \sum_{j=1}^M a_j \sigma(w_j^{\top} x) \right)^2 \\
+         &= \E_{x \sim \pi} \left[\left(\tilde{f}(x) - \E_{j_t \sim \mathcal{D}_M}[\tilde{f}(x)]\right)^2\right] = \E_{x \sim \pi} \left[\Var_{j_t \sim \mathcal{D}_M}\left( \tilde{f}(x) \right)\right] \\
+        &= \E_{x\sim \pi} \left[\frac{\norm{\theta}_\mathcal{P}^2 \cdot m}{m^2} \Var_{j_t \sim \mathcal{D}_M}\left(Y_t(x)\right)\right] \text{ ($t$ is a fixed index here)}\\
         &= \frac{\norm{\theta}_{\mathcal{P}}^2}{m} \cdot \E_{x\sim \pi} \left[\E_{j_t\sim \mathcal{D}_M}\left[\left(Y_t(x)\right)^2\right] - \left(\E_{j_t\sim \mathcal{D}_M} [Y_t(x)]\right)^2\right] \\
         &\le \frac{\norm{\theta}_{\mathcal{P}}^2}{m} \cdot \E_{x\sim \pi} \left[\E_{j_t\sim \mathcal{D}_M}\left[\left(Y_t(x)\right)^2\right]\right]  \\
         &= \frac{\norm{\theta}_{\mathcal{P}}^2}{m} \cdot  \E_{j_t\sim \mathcal{D}_M}\left[\E_{x\sim \pi}\left[\left(Y_t(x)\right)^2\right]\right].
     \end{align*}
     The inequality holds because $\E_{j_t\sim \mathcal{D}_M} [Y_t(x)]^2 = f^2_M(x; \theta) / \norm{\theta}_2^2 \ge 0$.
+    
     Then given $j_t$, we try to calculate 
     \begin{align*}
         \E_{x\sim \pi}\left[\left(\sigma(w_{j_t}^\top x)\right)^2\right] &= \int_{\mathbb{S}^{d-1}} \left(\max\{0, w_{j_t}^\top x\}\right)^2 \cdot d\pi(x) \\
