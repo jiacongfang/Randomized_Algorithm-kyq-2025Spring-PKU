@@ -159,9 +159,8 @@ If we can prove Lemma \ref{lemLST}, then one can see from Problem a that if $\be
         \end{align*}
         Notice that if $(x,y) \notin E$, we can repeat the above argument along the shortest path from $x$ to $y$ in $G$, and the results still hold.
 
-        \textcolor{blue}{\textbf{Bonus: Improve the time complexity to $\tilde{O}(n^2)$.}}
-        
-        The basic idea is reducing redundant queries to the same vertex (i.e. line 5 of Algorithm \ref{alg:ldd}).
+        \textcolor{blue}{\textbf{Bonus. It seems that the there are problems in following algorithm but I didn't find better way :(.}}
+        The basic idea is reducing redundant queries to the same vertex.
         \begin{algo}
             \caption{Improved Low Diameter Decomposition (LDD) with $\tilde{O}(n^2)$ time complexity}
             \label{alg:improved-ldd}
@@ -195,6 +194,8 @@ If we can prove Lemma \ref{lemLST}, then one can see from Problem a that if $\be
         We use heap-based priority queue whose time complexity of poping and adding is $O(\log n)$. 
         
         Therefore, the total time complexity of the algorithm is $O(m + n\log n) = O(n^2 + n\log n) = \tilde{O}(n^2)$.
+
+        \textbf{\textcolor{red}{Note:} We can use algorithm (CKR Decomposition) in Figure \ref{fig:ckr} with better bound and $\tilde{O}(n^2)$ time complexity instead of the above algorithm.}
         \item We will prove the lemma by induction on $\delta$. 
         
         \textbf{Base case}: when $\delta = 0$, we have $|V| = 1$ and the tree is a single vertex. There is nothing to prove.
@@ -269,9 +270,16 @@ If we can prove Lemma \ref{lemLST}, then one can see from Problem a that if $\be
                 \State \Return the computed clustering
             \end{algorithmic}
         \end{algo}
-        Similar with Algorithm \ref{alg:ldd}, we can implement CKR Decomposition in $\tilde{O}(n^2)$ time with priority queue instead of the naive Dijkstra algorithm \cite{mendel2009fastckrpartitionssparse}.
+        we can implement CKR Decomposition in $\tilde{O}(n^2)$ time with priority queue instead of the naive Dijkstra algorithm \cite{mendel2009fastckrpartitionssparse}. 
+        The detailed algorithm shows in \textbf{Figure \ref{fig:ckr}} and the time complexity is $O(m\log n  + n\log^2 n) = \tilde{O}(n^2)$.
+        \begin{figure}[htbp]
+            \centering
+            \includegraphics[width=0.9\textwidth]{./images/Graph-CKR.png}
+            \caption{Fast CKR Decomposition Algorithm proposed in \cite{mendel2009fastckrpartitionssparse}.}
+            \label{fig:ckr}
+        \end{figure}
 
-        Then we try to prove that CKR Decomposition has \textbf{Bounded Diameter} and even better \textbf{Separation Probability} than LDD.
+        Then we  prove CKR Decomposition has \textbf{Bounded Diameter} and \textbf{Separation Probability}:
         
         Bounded diameter is satisfies by the definition of CKR Decomposition directly(see line 1), i.e. we have 
             $\forall C_i$, there exists $c_i \in C_i$ such that $d_G(c_i, u) \leq D/2$ for all $u \in C_i$ which implies that $d_G(u, v) \leq D$ for all $u, v \in C_i$.
