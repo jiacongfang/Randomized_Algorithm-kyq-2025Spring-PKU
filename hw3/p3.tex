@@ -1,0 +1,17 @@
+\begin{question}{3 (5') (Problematic Proof in Balls in Bins)} Consider the following balls--and--bins problem: we throw $n$ balls in $n$ bins, and want to know how many bins contain at least $2$ balls. Alice proposes the following solution, which is problematic. Please point out what are the problem(s) with Alice's proof.\\
+
+\texttt{Let indicator variable $X_i = 1$ if there are at least $2$ balls in bin $i$, and let $X = \sum X_i$ be the number of bins with at least two balls. Consider the probability of there being at least two balls in bin $i$,}
+$$ \Pr[X_i = 1] = \binom{n}{2}\cdot \left(\frac{1}{n}\right)^2 \geq \frac{1}{4}$$
+\texttt{Thus, we have}
+$$ \mu = \mathbb{E[X]} \geq \frac{n}{4}$$
+\texttt{We now use a Chernoff Bound to prove that there are at least $\frac{n}{8}$ bins that contain $2$ balls, with high probability:}
+\begin{align*}
+    \Pr[X\leq \frac{n}{8}] & \leq \Pr[X \leq \frac{1}{2}\mu] \\
+    & \leq \exp\left(- \frac{\mu}{8}\right) \leq \frac{1}{n}
+\end{align*}
+\end{question}
+
+\begin{answer}
+    The Chernoff Bound requires the random variables to be independent, but in this case, the indicator variables $X_i$ are not independent. Therefore,  Alice cannot use Chernoff Bound on $\sum_{i=1}^n X_i$ directly which is the main problem.
+    \ed
+\end{answer}

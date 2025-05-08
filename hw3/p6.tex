@@ -1,0 +1,162 @@
+
+\begin{question}{6 (30') (Offline Balls and Bins)}    
+In the balls and bins model we have discussed in class, the balls are given \textit{online}. What will happen if they are given \textit{offline}?
+\begin{itemize}
+    \item [a. (8') ] There are $m$ balls and $n$ bins. We are given graph $G=(V,E)$ with $n$ vertices and $m$ edges. Each vertex $v$ correponds to a bin, and each edge $e$ correponds to the two choices of a ball. Each ball can only be allocated to one of the two choices. Prove that the minimal max load
+    $$\operatorname{Load(G)}=\max_{S\subseteq V}\left\lceil\frac{|E(S)|}{|S|}\right\rceil$$
+    where $\lceil\cdot\rceil$ denotes the ceiling functions, $S$ is any subset of $V$ and $E(S)$ consists of all the edges in $E$ that have both endpoints in $S$.
+    Note that $G$ may not be simple; that is, there can be multiple edges, meaning that two or more balls must be placed in the same pair of bins.
+
+    \textit{[Hint: The $\geq$ side is easy. To prove the equality, formulate the minimal max load problem either as a linear programming, perfect matching or maximum flow problem. You can consider its duality to derive the result.]}
+    
+    \textit{[Hint: This result is for (b) only and the proof does not involve any randomization arguments. Skip it if you have a tight schedule or have no idea.]}
+    
+    \item [b. (12')] Now we consider $n$ balls and $n$ bins; that is, let $m=n$. Show that if the two choices are picked randomly, the minimal max load is at most $2$ with high probability.
+    
+    \textit{[Hint: Bound the probability that a subgraph contains too many edges. To show the sum is $o(1)$, you may divide its size into three intervals: $[2, n/6]$, $[n/6, 5n/12]$ and $[5n/12,n/2]$. What are the dominating coefficients in each interval?]}
+    
+    \textit{[Hint: Given any $\alpha\in[1/6,5/6]$ and $n$ sufficiently large (independent of $\alpha$), there is $\binom{n}{\alpha n}<2^{H(\alpha)n}$, where $H(\alpha)=-\alpha\log \alpha-(1-\alpha)\log(1-\alpha)$ (log to base 2).]}
+    
+    \textit{[Hint: You may find the following numerical results useful: $$\text{(i) }2^{H(\alpha)+H(1/2)+ 4\alpha\log\alpha}<0.96 \text{ for any }\alpha\in[1/6,5/12].$$ $$\text{(ii) }2^{H(a)+H(5/6)+4\alpha\log\alpha}<0.8\text{ for any }\alpha\in[5/12,1/2].$$ Be careful when simplifying the binomial coefficients.]}
+
+    \item [c. (10')] Continuing with $n$ balls and $n$ bins, show that the minimal max load is not 1 with high probability. Hence, we conclude that the load is almost surely 2.
+    
+    You can use a known result: %For a uniformly random {\it simple} graph with $n$ vertices and $\frac{c}{2}n$ edges, where $c$ can be any constant $>1$, with high probability the graph contains a unique giant component with $(A+o(1))n$ vertices and $(B+o(1))n$ cycles. Here $A$ and $B$ are positive constants determined by $c$.
+    If $m = cn/2, c>1$, then w.h.p. random graph $G_m$ consists of a unique giant component, with $(1 - \frac{x}{c} + o(1)) n$ vertices and $( 1 - \frac{x^2}{c^2} + o(1)) \frac{cn}{2}$ edges. 
+    Here $0 < x < 1$ is the solution of the equation $xe^{-x} = ce^{-c}$. The remaining components  are of order at most $\order{\log n}$.
+\end{itemize}
+\end{question}
+
+\begin{answer}
+    \begin{enumerate}[label=\alph*).]
+        \item We first prove the $\geq$ side, denote $\text{Load}(G) = k^*$. Then $\forall S \subseteq V$, we have:
+        \begin{equation}
+            \label{eq:6.1.1}
+            |E(S)| \le \sum_{v\in S} \text{load}(v) \le \sum_{v\in S} k^* = k^* |S| \implies \frac{|E(S)|}{|S|} \le k^* = \text{Load}(G).
+        \end{equation}
+        % Here we will use the \textbf{\cref{lem:hall}} (Hall's Marriage Theorem) to prove the other side.
+        
+        % Let $G_0 = (X, Y, E)$ be a bipartite graph, where $X = \{x_1, \cdots, x_n\}$ and each $x_i \in X$ correponds to the bin $i$. 
+        % And define $Y$ as 
+        % \begin{equation*}
+        %     Y = \{y_{i, k} ~|~ \forall x_i \in X \land 1 \le k \le k^* \}.
+        % \end{equation*}
+        % which is actually $k^* = \text{Load(G)}$ copy of $X$. Then for each ball $b_t$ with two choices $x_i$ and $x_j$, we add edges to $E$ as follows:
+        For the other side, we construct a network flow model $G' = (V', E')$ as follows:
+        \begin{itemize}
+            \item Add a source node $s$ and a sink node $t$.
+            \item For each $e \in E$, add a node $x_e$ and add an edge $(s, x_e)$ with capacity $1$.
+            \item For each $v \in V$, add a node $x_v$ and add an edge $(x_v, t)$ with capacity $L$.
+            \item For each edge $(u, v) \in E$, add edges $(x_e, x_u)$ and $(x_e, x_v)$ with capacity $1$.
+        \end{itemize}
+        where 
+        \begin{align*}
+            L =: \max_{S\subseteq V}\left\lceil\frac{|E(S)|}{|S|}\right\rceil
+        \end{align*}
+        Then the max flow of $G'$ is $|E|$ if and only if there is a valid assignment of edeges to vertices with max load at most $L$.
+
+        And the Max-Flow Min-Cut Theorem states that the maximum flow in a flow network is equal to the capacity of the minimum $s$-$t$ cut. 
+        Therefore, we only need to prove that the minimum $s$-$t$ cut of $G'$ is at most $|E|$. Suppose we devide $V'$ into $A$ and $B$, and let $s \in A$ and $t \in B$.
+        For any subset $S \subseteq V$, we select $A$ and $B$ as follows:
+        \begin{itemize}
+            \item $A = \{s\} \cup \{x_v: \forall v \in S \} \cup \{x_e: e = (u,v) \land (u \in S \lor v \in S) \}$.
+            \item $B = V' \setminus A$.
+        \end{itemize}
+        Notice that for any $x_e \in B$, if we add $x_e$ to $A$, then the capacity of the cut will be increased by $1$. 
+        For any   $e = (u, v), x_e \in A$ and $x_u, x_v \in A$, if we add $x_e$ to $B$, then the capacity of the cut will be increased by $3$.
+        For any $e = (u, v), x_e \in A$ and $x_u$ or $x_v \in B$, if we add $x_e$ to $B$, then the capacity of the cut will increased by $1$.
+        Therefore, the selected cut is the minimal one given the subset $S$, and we have:
+        \begin{align*}
+            \text{capacity}(A, B) &= L*|S| + 2 |\{e: x_e \in B\}| + |\{(u,v):x_{(u,v)} \in A \text{ and only 1 endpoint in }A\}| \\ 
+            &\ge L*|S| + |E \setminus E(S)| = L*|S| + |E| - |E(S)|
+        \end{align*}
+        And we have:
+        \begin{align*}
+            L = \max_{S\subseteq V}\left\lceil\frac{|E(S)|}{|S|}\right\rceil \implies L \ge \frac{|E(S)|}{|S|},  \forall S \subseteq V 
+        \end{align*}
+        Therefore, for all subset $S \subseteq V$, we have:
+        \begin{align*}
+            \text{capacity}(A, B) \ge L*|S| + |E| - |E(S)| \ge |E|.
+        \end{align*}
+        which implies that the capacity of any $s$-$t$ cut is as least $|E|$. Since the max flow of $G'$ is equal to the minimal cut, the max flow is at least $|E|$. 
+        Due to any feasible flow of $G'$ is at most $|E|$, the max flow of $G'$ is exactly $|E|$.
+
+        Therefore, there exists a valid assignment of edges to vertices with max load at most $L$, \textit{i.e.,}
+        \begin{equation}
+            \label{eq:6.1.2}
+            \text{Load}(G) \le L = \max_{S\subseteq V}\left\lceil\frac{|E(S)|}{|S|}\right\rceil
+        \end{equation}
+        Combine with the result in \cref{eq:6.1.1,eq:6.1.2}, we have:
+        \begin{align*}
+            \operatorname{Load(G)}=\max_{S\subseteq V}\left\lceil\frac{|E(S)|}{|S|}\right\rceil
+        \end{align*}
+        \textbf{Note:} We can also use Lagrange duality, or perfect matching with Hall's Marriage Theorem (\textbf{\cref{lem:hall}}) to prove the result.
+        \item Using the result in part (a), we only need to prove that with high probability, any subset $S \subseteq V$ 
+        satisfies $|E(S)| \le 2|S|$. We try to bund the probability that there exists a subset $S$ such that $|E(S)| > 2|S|$. For a fixed set $A$ of $t$ nodes, we have:
+        \begin{equation*}
+            \Pr\left[E(A) > 2t\right] \le \binom{m}{2t} \left(\frac{t}{n}\right)^{2t\times 2} = \binom{n}{2t} \left(\frac{t}{n}\right)^{4t}
+        \end{equation*}
+        since each edge has $2$ endpoints, and the probability of each vertex being selected into $S$ is $t / n$ while the choices are independent. 
+        Notice that when $t > n/2$, $\Pr\left[E(A) > 2t\right] = 0$.
+        Then by the union bound, we have:
+        \begin{align*}
+            \Pr\left[\exists \text{ a bad set}\right] \le \sum_{t = 2}^{n/2} \binom{n}{t} \binom{n}{2t} \left(\frac{t}{n}\right)^{4t}
+        \end{align*}
+        Follow the hint, we can bound the sum by dividing it into three parts. 
+        \begin{itemize}
+            \item For $t \in [5n/12, n/2]$, $\alpha := t / n \in [5/12, 1/2]$, then we have:
+            \begin{align*}
+                \sum_{t=5n/12}^{n/2} \binom{n}{t} \binom{n}{2t} \left(\frac{t}{n}\right)^{4t} &\le \sum_{t=5n/12}^{n/2} \binom{n}{\alpha n} \binom{n}{5n/6} \alpha^{4\alpha n} \\ 
+                &\le 2^{H(\alpha) n + H(5/6) n + 4\alpha n \log \alpha} \\
+                &\le \frac{n}{12} \cdot 0.8^n 
+            \end{align*}
+            \item For $t \in [n/6, 5n/12)$, $\alpha := t / n \in [1/6, 5/12)$, then we have:
+            \begin{align*}
+                \sum_{t=n/6}^{5n/12} \binom{n}{t} \binom{n}{2t} \left(\frac{t}{n}\right)^{4t} &\le \sum_{t=n/6}^{5n/12} \binom{n}{\alpha n} \binom{n}{n/2} \alpha^{4\alpha n} \\ 
+                &\le 2^{H(\alpha) n + H(1/2) n + 4\alpha n \log \alpha} \\
+                &\le \frac{n}{4} \cdot 0.96^n
+            \end{align*} 
+            \item For $t \in [2, n/6)$, then we have:
+            \begin{align*}
+                \sum_{t= 2}^{n/6} \binom{n}{t} \binom{n}{2t} \left(\frac{t}{n}\right)^{4t} &\le \sum_{t= 2}^{n/6} \left(\frac{ne}{t}\right)^t \left(\frac{ne}{2t}\right)^{2t} \left(\frac{t}{n}\right)^{4t} \\
+                &= \sum_{t= 2}^{n/6} \left(\frac{e^3 t}{4n}\right)^t % = \sum_{t= 2}^{n/6} \left(\frac{t}{n}\right)^t \left(\frac{e^3}{4}\right)^t
+            \end{align*}
+            Notice that when $t = n /6$, $e^3 t / (4n) = e^3 / 24 < 1$. Therefore, we can bound the sum by dividing it into two parts, $[1, c\sqrt{n})$ and $[c\sqrt{n}, n/6)$, where $c$ is a constant waited to be determined. In details,
+            \begin{align*}
+                \sum_{t=2}^{n/6} \left(\frac{e^3 t}{4n}\right)^t &\le \sum_{t=2}^{c\sqrt{n}} \left(\frac{e^3 t}{4n}\right)^t + \sum_{t=c\sqrt{n}}^{n/6} \left(\frac{e^3 t}{4n}\right)^t \\
+                &\le  \sum_{t=2}^{c\sqrt{n}} \left(\frac{e^3\cdot c\sqrt{n}}{4n}\right)^t  + \sum_{t=c\sqrt{n}}^{n/6} \left(\frac{e^3 \cdot n / 6}{4n}\right)^t \\
+                &\le \sum_{t=2}^{c\sqrt{n}} \left(\frac{e^3\cdot c\sqrt{n}}{4n}\right)^2  + \sum_{t=c\sqrt{n}}^{n/6} \left(\frac{e^3 \cdot n / 6}{4n}\right)^{c\sqrt{n}} \\
+                &\le c\sqrt{n}\cdot \frac{e^6 c^2}{16 n} + \frac{n}{6} \cdot \left(\frac{e^3}{24}\right)^{c\sqrt{n}} \\
+                \text{($c$ is a constant) }&= \order{\frac{1}{\sqrt{n}}}.
+            \end{align*}
+        \end{itemize}
+        Combining these three parts, we have:
+        \begin{align*}
+            \Pr\left[\exists \text{ a bad set}\right] &\le \sum_{t = 2}^{n/2} \binom{n}{t} \binom{n}{2t} \left(\frac{t}{n}\right)^{4t} \\
+            &\le \frac{n}{12} \cdot 0.8^n + \frac{n}{4} \cdot 0.96^n + \order{\frac{1}{\sqrt{n}}} = o(1).
+        \end{align*}
+        for sufficiently large $n$. Therefore, we have shown that the minimal max load is at most $2$ with high probability.
+        \item According to the known result, w.h.p there is a unique giant component  $S$ such that $|S| = (1 - \frac{x}{c} + o(1)) n$ and $|E(S)| = ( 1 - \frac{x^2}{c^2} + o(1)) \frac{cn}{2}$. 
+        Then we have:
+        \begin{align*}
+            \frac{|E(S)|}{|S|} &= \frac{(1 - x^2 / c^2 + o(1))\cdot  cn / 2}{( 1 - x / c + o(1))\cdot n} = \frac{c}{2} \cdot \frac{1 - x^2 / c^2 + o(1)}{1 - x / c + o(1)} \\
+           (\text{Let } c = 2)\quad  &= 1 + \frac{x}{2} + o(1)  \\
+           &> 1.2 + o(1) > 1.   \quad \hookleftarrow \text{$ x \in (0.4, 0.42)$ for $x e^{-x} = 2 e^{-2}$.}
+        \end{align*}
+        Therefore, combining with the result in part (a). , with high probability, the minimal max load is not 1.
+    \end{enumerate}
+    \begin{lemma}\textbf{(Hall's Marriage Theorem)}
+        \label{lem:hall}
+        For a bipartite graph $G$ on the parts $X$ and $Y$, then following conditions are equivalent:
+        \begin{enumerate}[label=(\roman*)]
+            \item There is a perfect matching of $X$ into $Y$.
+            \item For each subset $T \subseteq X$, the inequality $|T| \le |N_G(T)|$ holds.
+        \end{enumerate}
+        where $N_G(T)$ denote the set of vertices of $G$ that are adjacent to some vertex in $T$, that is,
+        \begin{equation*}
+            N_G(T) := \{v \in V(G) ~|~ (v,w) \in E(G) \text{ for some } w \in T\}.
+        \end{equation*}
+        The proof of this theorem can be found in \href{https://math.mit.edu/~fgotti/docs/Courses/Combinatorial%20Analysis/30.%20Matchings%20and%20Hall's%20Theorem/Matching%20and%20Hall's%20Theorem.pdf}{\textcolor{blue}{the Course Notes of MIT}}, ignoring the details here.
+    \end{lemma}
+    \ed
+\end{answer}

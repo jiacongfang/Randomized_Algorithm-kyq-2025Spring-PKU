@@ -1,0 +1,46 @@
+\begin{question}{5 (10') (Binomial Branching Process)}
+        Consider a binomial Galton-Watson branching process. At each step, every node from the previous step gives rise to $X\sim \text{Bin}(m, p)$ children independently. Denote the number of newly born nodes at time $t$ by $Z_t$, with $Z_0=1$ being the initial node. The process does not die out if $Z_t>0$ for all $t\ge 1$. Let 
+        $$
+        y(m, p):=\Pr[Z_t>0, \forall t\ge 1].
+        $$ 
+    \begin{itemize}
+        \item[a. (5')] Give an implicit equation for $y(m,p)$. For example, $u(x)=x(1+u(x))^{u(x)}$ is an implicit equation. Prove your result. 
+        
+        \item[b. (5')] With $m\ge 2$ fixed and $mp=1+\varepsilon, \varepsilon>0$, compute 
+        $$\lim_{\epsilon\to 0^+} \frac{y(m, p)}{\varepsilon}.$$
+        You do not need to prove the existence of the limit.
+        
+    \end{itemize}
+\end{question}
+
+\begin{answer}
+    \begin{enumerate}[label=\alph*).]
+        \item In the lecture notes, we already know that the extinction probability $q^*$ is the solution of $f(x) = x$, 
+        where $f(x)$ is the probability generating function of $X$, i.e. 
+        \begin{equation*}
+            f(x) = \sum_{i\ge 0} \Pr[X=i] x^i = \sum_{i\ge 0} \binom{m}{i} p^i (1-p)^{m-i} x^i = (1-p + px)^m.
+        \end{equation*}
+        Notice that $y(m, p)$ is actually the probability that the process does not die out, \textit{i.e.}, $1-q^*$. Therefore, we have:
+        \begin{equation}
+            q^* = (1-p + p\cdot q*)^m \implies y(m,p) = 1 -  (1-p\cdot y(m,p))^m.
+        \end{equation}
+        \item Let $y(m, p) := k\varepsilon, p = (1+\varepsilon)/m$, then we have:
+        \begin{equation*}
+            1 - k\varepsilon = \left[1 - \left(\frac{k\varepsilon}{m} + \frac{k\varepsilon^2}{m}\right)\right]^m 
+        \end{equation*}
+        By Taylor expansion, we have:
+        \begin{align*}
+            \left[1 - \left(\frac{k\varepsilon}{m} + \frac{k\varepsilon^2}{m}\right)\right]^m  = 1 - m \left(\frac{k\varepsilon + k\varepsilon^2}{m}\right) + \frac{m(m-1)}{2}\left(\frac{k\varepsilon + k \varepsilon^2}{m}\right)^2 + o(\varepsilon^2).
+        \end{align*}
+        When $\varepsilon \to 0^+$, we have:
+        \begin{gather*}
+            1 - k\varepsilon =  1 - k\varepsilon(1 + \varepsilon) + \frac{m-1}{2m} k^2 (\varepsilon + \varepsilon^2)^2, \\
+            \frac{m-1}{2m} k^2 \varepsilon^2(1 + \varepsilon)^2 - k \varepsilon^2 = 0 \implies \frac{m-1}{2m} k (1 + \varepsilon)^2 - 1 = 0 \implies k = \frac{2m}{(m-1)}.
+        \end{gather*}
+        Therefore, we have:
+        \begin{equation*}
+            \lim_{\varepsilon\to 0^+} \frac{y(m, p)}{\varepsilon} = \frac{2m}{(m-1)}.
+        \end{equation*}
+    \end{enumerate}
+    \ed
+\end{answer}

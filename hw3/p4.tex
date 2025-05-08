@@ -1,0 +1,122 @@
+\begin{question}{4 (30') (Random Graphs Proof of Power of Two Choices)} In this problem, we will show another way to prove that the maximium load is $O(\log \log n)$, though our argument cannot provide the coefficient. 
+    
+    There are $\frac{n}{512}$ balls and $n$ bins. We implement the two-choice procedure and record the procedure using a graph with $n$ nodes:
+    
+% \begin{algorithm}[H]
+% \SetAlgoLined
+% \KwResult{load,$G$}
+% $G=(V,\emptyset)$\;
+% $\forall i, \mathrm{load}(i)=0$\;
+% \For{each ball}{
+% Randomly pick two bins $u\neq v$\;
+% Add edge $(u,v)$ to $G$\;
+% \eIf{$\mathrm{load}(u)\leq \mathrm{load}(v)$}{$\mathrm{load}(u)++$\tcc*{throw the ball into bin $u$}}{ $\mathrm{load}(v)++$\tcc*{throw the ball into bin $v$}}
+% }
+% \caption{Power of two choice}
+% \end{algorithm}
+
+\begin{algo}
+    \caption{Power of Two Choices}
+    \label{alg:two-choices}
+    \centering
+    \begin{algorithmic}[1]
+        \Ensure{Load, $G$}
+        \State $G \leftarrow (V,\emptyset)$
+        \State $\forall i, \mathrm{load}(i) \leftarrow 0$
+        \For{each ball}
+            \State Randomly pick two bins $u\neq v$
+            \State Add edge $(u,v)$ to $G$
+            \If{$\mathrm{load}(u)\leq \mathrm{load}(v)$}
+                \State $\mathrm{load}(u) \leftarrow \mathrm{load}(u) + 1$ \Comment{\texttt{throw the ball into bin $u$}}
+            \Else
+                \State $\mathrm{load}(v) \leftarrow \mathrm{load}(v) + 1$ \Comment{\texttt{throw the ball into bin $v$}}
+            \EndIf
+        \EndFor
+    \end{algorithmic}
+\end{algo}
+
+We use the graph $G$ to analyze the loads. 
+    \begin{itemize}
+        \item [a. (10')] Show that there exists a constant $K > 0$ such that, for all subsets $S$ of the vertex set with $|S| \ge K$, the induced graph $G[S]$ contains at most $5|S|/2$ edges, and hence has average degree at most $5$, w.h.p.
+        
+        \textit{[Hint: You may find this useful: $\binom{n}{d}\le \left(\frac{ne}{d}\right)^d$.]}
+        
+        \textit{[Hint: When you attempt to bound a sum, try to break it into two parts and bound them separately.]}
+        
+        \item [b. (10')] Given graph $G$, we recursively remove all vertices of degree $\le 10$ in $G$ until there are no more vertices of degree $\le 10$. Prove that this procedure ends after $O(\log \log n)$ rounds w.h.p., and the number of remaining vertices in each remaining component is at most $K$ w.h.p.
+        
+        \item [c. (10')] $\forall i$, if a node $u$ survives $i$ rounds, show that $\mathrm{load}(u)\leq 10 i$. If a node $u$ is never deleted, show that $\mathrm{load}(u)\leq 10i^* + cK$ w.h.p., where $i^*$ is the total number of rounds and $c$ is a constant.
+        
+        \textit{[Hint: Use Induction.]}
+    \end{itemize}
+
+    (b) shows w.h.p. that $i^{*} = O(\log \log n)$. Thus, if we throw $n/512$ balls into $n$ bins using the best-of-two-bins method, then w.h.p. the maximum load of any bin is $O(\log \log n)$. Hence for the case of $n$ balls and $n$ bins, the maximum load would be at most $512*O(\log \log n)=O(\log \log n)$.
+    
+\end{question}
+
+\begin{answer}
+    \begin{enumerate}[label=\alph*).]
+        \item For a fixed set $S_0$ with $k$ nodes, we have (denote $m = n / 512$):  
+        \begin{equation*}
+            \Pr\left[S_0 \text{ has } > \frac{5k}{2} \text{ edges}\right] \le \binom{m}{5k/2} \left(\frac{k}{n}\right)^{2.5k \times 2} = \binom{m}{5k/2} \left(\frac{k}{n}\right)^{5k}
+        \end{equation*}
+        since each edge has $2$ endpoints, and the probability of each vertex being selected into $S$ is $k / n$ while the choices are independent. Then by the union bound, we have:
+        \begin{align*}
+            \Pr\left[\exists \text{$S$ that contains } > \frac{5|S|}{2} \text{ edges}\right] &\le \sum_{k \ge K} \binom{n}{k} \binom{m}{5k/2} \left(\frac{k}{n}\right)^{5k}  \\
+            \text{(by hint 1) }&\le \sum_{k\le K} \left(\frac{ne}{k}\right)^k \left(\frac{ne}{512(5k/2)}\right)^{5k/2} \left(\frac{k}{n}\right)^{5k} \\
+            &= \sum_{k \le K} \left(\frac{k}{n}\right)^{3k/2} \frac{e^{7k/2}}{1280^{5k/2}} \\
+            &= \sum_{k \le K} \left(\frac{k}{n}\right)^{3k/2} \left(\frac{e^{3.5}}{1280^{2.5}}\right)^k.
+        \end{align*}
+        Let $ a = \frac{e^{3.5}}{1280^{2.5}} < 1/2$, then for large enough $k$, $a^k$ will be exponentially small, and for small $k$, we can bound the sum by the other terms, i.e. $(k/n)^{3k/2}$.  Therefore, we bound the sum by dividing it into two parts:
+        \begin{align*}
+            \Pr\left[\exists \text{$S$ that contains } > \frac{5|S|}{2} \text{ edges}\right] &\le \sum_{k = K}^{2\log_2 n} \left(\frac{k}{n}\right)^{3k/2} a^k + \sum_{k = 2\log_2 n}^{n} \left(\frac{k}{n}\right)^{3k/2} a^k \\
+            &\le \sum_{k = K}^{2\log_2 n} \left(\frac{k}{n}\right)^{3k/2} + \sum_{k = 2\log_2 n}^{n} a^k \\
+            &\le 2\log_2 n \cdot \left(\frac{2\log_2 n}{n}\right)^{3K/2} + \sum_{k = 2\log_2 n}^{n} \frac{1}{n^2} \\
+            &\le \order{\frac{1}{n}}
+        \end{align*}
+        The last inequality holds when we choose $K$ to be a large enough constant. Therefore, we have shown that the statement holds with high probability.
+        \item We first prove that the size of $G$'s largest connected component is $O(\log n)$ with high probability. Consider $k = \Theta(\log n)$, then we have:
+        \begin{align*}
+            \Pr\left[k+1 \text{ vertices are connected}\right] &\le \Pr\left[\text{at least $k$ edges within the $k+1$ vertices}\right] \\
+            &\le \binom{m}{k} \left(\frac{\binom{k+1}{2}}{\binom{n}{2}}\right)^{k} = \binom{m}{k} \left(\frac{k(k+1)}{n(n-1)}\right)^k \\
+            (n(n-1)\ge n^2/2, k(k+1) \le 2k^2)~&\le \binom{m}{k} \left(\frac{2k^2}{n^2/2}\right)^k = \binom{m}{k} \left(\frac{4k^2}{n^2}\right)^k
+        \end{align*}
+        Therefore, by the union bound, we have:
+        \begin{align*}
+            \Pr\left[\exists\text{ a connected component of size $k+1$}\right] &\le \binom{n}{k+1} \Pr\left[k+1 \text{ vertices are connected}\right] \\
+            &\le \binom{n}{k+1} \binom{m}{k} \left(\frac{4k^2}{n^2}\right)^k \\
+           \left(\binom{n}{d}\le \left(\frac{ne}{d}\right)^d\right)\quad &\le \left(\frac{ne}{k+1}\right)^{k+1} \left(\frac{ne}{512k}\right)^k \left(\frac{4k^2}{n^2}\right)^k 
+        \end{align*}
+        \begin{align*}
+            \Pr\left[\exists\text{ a connected component of size $k+1$}\right] & \le \binom{m}{k} \left(\frac{2k^2}{n^2/2}\right)^k = \binom{m}{k} \left(\frac{4k^2}{n^2}\right)^k \\
+            &= \frac{en}{k+1} \left(\frac{k}{k+1}\right)^k \left(\frac{e^2}{128}\right)^k   \\
+            (k = \Theta(\log n))\quad &\le \frac{en}{k+1} \left(\frac{e^2}{128}\right)^k \le \order{\frac{1}{n}}.
+        \end{align*}
+        Therefore, we have shown that the size of $G$'s largest connected component is $O(\log n)$ with high probability.
+        
+        When there exists a component with more than $K$ vertices, by the result of part (a), we know that the average degree of the component is at most $5$. 
+        Then by Markov's inequality, for any vertex $u$ in the component, we have:
+        \begin{align*}
+            \Pr\left[\deg(u) \ge 11\right] &\le \frac{\E_u\left[\deg(u)\right]}{11} \le \frac{5}{11} < \frac{1}{2}.
+        \end{align*}
+        Therefore, in expectation, we have at least $K/2$ vertices with degree at most $10$ and will be deleted in current round. 
+
+        Combining these two results, we observe that in each round, the number of vertices in any component with size larger than $K$ is reduced by at least half in expectation. Since the size of the largest component is initially at most $O(\log n)$, the number of rounds is at most $O(\log \log n)$ with high probability. And when the procedure ends, the number of remaining vertices in each component is at most $K$ with high probability.
+        \item We prove it by induction on $i$. For the base case, if a node $u$ is deleted in the $i=1$ round, then $\deg(u) \le 10$,  so the load of $u$ is at most $10$. The statement holds for $i=1$.
+        
+        Suppose the statement holds for $i \in \{1,2,\cdots, k-1\}(k\le i^*)$, now consider any vertex deleted in the $k$-th round. Denote the set of vertices that are deleted in the first $k-1$ rounds as $S_{k-1}$, then by 
+        the induction hypothesis, we have:
+        \begin{equation*}
+            \forall s \in S_{k-1},\quad  \text{load}(s) \le 10(k-1).
+        \end{equation*}
+        Since each ball is thrown into the bin with the smaller load, the load of $u$ that relates to $S_{k-1}$ is at most $10(k-1)$. 
+        And $u$ is deleted in the $k$-th round which means that $\deg(u) \le 10$, so the total laod of $u$ is at most $10k$. Therefore, the statement holds for $i=k$.
+
+        Now we consider the case when $u$ is never deleted, denote the set of vertices that are deleted in the first $i^*$ rounds as $S_{i^*}$. Similar to the previous case, we know that 
+        the load of $u$ that relates to $S_{i^*}$ is at most $10i^*$. Besides, due to the result of part (b), we know that the size of the largest component is at most $K$ with high probability.
+        Therefore, the load of $u$ is at most $10i^* + cK$ with high probability.
+
+        Combining these two results, we have shown that $\forall i$, if a node $u$ survives $i$ rounds, then $\mathrm{load}(u)\leq 10 i$. If a node $u$ is never deleted, then $\mathrm{load}(u)\leq 10i^* + cK$ with high probability.
+    \end{enumerate}
+    \ed
+\end{answer}

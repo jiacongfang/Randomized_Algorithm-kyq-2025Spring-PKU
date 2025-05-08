@@ -1,0 +1,28 @@
+\begin{question}{1 (10') (Balanced Chatting Groups)}
+   There are $n$ students, each is assigned one of the two language to speak, Chinese or English. A chatting group is a non-empty subset of $n$ students. There are $m$ different chatting groups. One student must speak the same language in all chatting groups he or she participates. Prove that there exists an assignment of the $n$ student's languages, such that in all the $m$ chatting groups, the difference of speaker numbers of the two languages is $\order{\sqrt{n \log{m}}}$.    
+\end{question} 
+
+
+\begin{answer}
+   Denote the $m$ different chatting groups as $G_1, G_2, \ldots, G_m$. For each student $i$, let $X_i$ be
+   \begin{align*}
+         X_i = \begin{cases}
+            1 & \text{if student $i$ speaks Chinese} \\
+            -1 & \text{if student $i$ speaks English}
+         \end{cases}
+   \end{align*}   
+   We randomly assign $X_i \in \{0,1\}$ for each student $i$ independently with equal probability. 
+   For each chatting group $G_j$, suppose $|G_j| = k_j$, let the difference of speaker numbers of the two languages in $G_j$ as $Y_j$, 
+   \begin{align*}
+      Y_j = \left|\sum_{i \in G_j} X_i\right|  = |2 Y_{c,j} - k_j|, 
+   \end{align*} 
+   where $Y_{c,j}$ is the number of Chinese speakers in $G_j$. Notice that $Y_{c,j} \sim \text{Binomial}(k_j, 1/2)$, 
+   thus we have ($c$ is a constant waited to be determined)
+   \begin{align*}
+      \Pr\left[\exists G_j, Y_j > c \sqrt{n\log m}\right] &\le m \cdot \Pr\left[ |2 Y_{c,j} - k_j| > c \sqrt{n\log m} \right] \\
+      &= m \cdot \Pr\left[ \left|Y_{c,j} -\frac{k_j}{2}\right| > \frac{c \sqrt{n\log m}}{2} \right] \\
+     \text{ (Chernoff Bound) } &\le 2 m \cdot \exp\left(-\frac{2}{n} \cdot \frac{c^2 n \log m}{4}\right) \\
+      \text{(For $c$ large enough) } &= 2 m^{1 - c^2/2} < 1 
+   \end{align*}
+   Therefore, there exists an assignment of the $n$ student's languages, such that in all the $m$ chatting groups, the difference of speaker numbers of the two languages is $\order{\sqrt{n \log{m}}}$. \ed
+\end{answer}

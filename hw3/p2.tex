@@ -1,0 +1,52 @@
+
+    \begin{question}{2 (15') (Distinguish Sets by Intersections)}
+    Consider $k \leq \frac{1.99n}{\log_2{n}}$ and assume $n$ is sufficiently large, prove that for any collection of subsets $S_1, \cdots, S_k \subseteq \qty{1, \cdots, n}$, there exist two distinct subsets $X, Y \subseteq \qty{1, \cdots, n}$ such that $\abs{X \cap S_i} = \abs{Y \cap S_i}$ for all $i \in \qty{1, \cdots, k}$.
+
+    \textit{[Hint: Introduce proper randomization process when choosing $X$, and analyze the concentration of $\abs{X\cap S_i}$.]}
+    \end{question}
+
+
+\begin{answer}
+    Given any collection of subsets $S_1, \cdots, S_k \subseteq \qty{1, \cdots, n}$, let $k_i = |S_i|$. 
+    We randomly choose $X \subseteq \qty{1, \cdots, n}$ by including each element with probability $p = 1/2$. 
+    Given $X$ and for any $i\in \{1,2, \cdots, k\}$, denote $N_i = |X \cap S_i|$. 
+    Then $N_i$ follows a binomial distribution, $N_i \sim \text{Binomial}(k_i, 1/2)$.
+    Therefore, by the Chernoff bound, we have
+    \begin{equation*}
+        \Pr\left[\left|N_i - \frac{k_i}{2}\right| \ge \varepsilon\right] \leq 2\exp\left(-\frac{2 \varepsilon^2}{k_i}\right)
+    \end{equation*}
+    where $\varepsilon$ is a constant waited to be determined. Then by the union bound, we have
+    \begin{align*}
+        \Pr\left[\exists i \text{ s.t. }  \left|N_i - \frac{k_i}{2}\right| \ge \varepsilon \right] &\le \sum_{i=1}^k \Pr\left[\left|N_i - \frac{k_i}{2}\right| \ge \varepsilon\right]  \le 2 \sum_{i=1}^k \exp\left(-\frac{2 \varepsilon^2}{k_i}\right) \\
+        &\le 2k \cdot \exp\left(-\frac{2 \varepsilon^2}{n}\right) := p(\varepsilon)
+    \end{align*}
+    We choose the $X$ that satisfies $\left|N_i - k_i / 2\right| < \varepsilon$ for all $i\in \{1,2, \cdots, k\}$, 
+    then the number of such $X$ is at least $N_\text{valid} := 2^n \cdot (1 - p(\varepsilon))$. 
+    Notice that the number of valid $v = (N_1, N_2, \cdots, N_k)$ is at most $N_\text{vec} := (2\varepsilon)^k$. 
+    Then our goal is to show that $N_\text{valid} >  N_\text{vec}$, which implies the existence of two distinct satisfied $X$ and $Y$. 
+
+    Let $\varepsilon = \sqrt{n\ln (2k^2)} / \sqrt{2}$. Then we have
+    \begin{align*}
+        p(\varepsilon) \le 2k \cdot e^{-\ln (2k^2)}  = \frac{1}{k}. \quad N_\text{vec} = \left(2n\ln (2k^2)\right)^{k/2}
+    \end{align*}
+    Therefore, we only need to show that
+    \begin{align*}
+        2^n \cdot \frac{k-1}{k} < \left(2n\ln (2k^2)\right)^{k/2} &\iff \frac{k}{2} \log_2 \left[2n \ln (2k^2)\right] < n + \log_2 \frac{k-1}{k}  \\
+        &\iff k < \frac{2n + 2\log_2 [(k-1)/k]}{\log_2 \left[2n \ln (2k^2)\right]} 
+    \end{align*}
+    Notice that $ k \leq \frac{1.99n}{\log_2{n}}$, so we need to show that
+    \begin{equation}
+        \frac{1.99n}{\log_2{n}} \le  \frac{2n + 2\log_2 [(k-1)/k]}{\log_2 \left[2n \ln (2k^2)\right]} = \frac{2n + 2\log_2 [(k-1)/k]}{\log_2 n + 1 + \log_2 [\ln (2k^2)]} \\
+    \end{equation}
+    which is equivalent to
+    \begin{equation}
+        \label{eq:2}
+        0.01 n\log_2 n \ge 1.99n + 1.99n \cdot \log_2 \left[\ln (2k^2)\right] + 2\log_2 n \cdot \log_2 \left[\frac{k}{k-1}\right]
+    \end{equation}
+    Since we have $2\log_2 n \cdot \log_2 \left[\frac{k}{k-1}\right] = \order{\log n \cdot \log k } = \order{\log^2 n}$,  $0.01 n\log_2 n = \order{n \log n}$, and 
+    \begin{equation*}
+        1.99n \cdot \log_2 \left[\ln (2k^2)\right] = \order{n \log(\log k)}  = \order{n \log(\log n)} 
+    \end{equation*}
+    Therefore, for sufficiently large $n$, \cref{eq:2} holds, i.e., $N_\text{valid} > N_\text{vec}$, which implies the existence of two distinct $X$ and $Y$ that satisfy the requirements.
+    \ed
+\end{answer}
